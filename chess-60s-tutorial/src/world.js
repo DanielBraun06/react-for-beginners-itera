@@ -194,6 +194,7 @@ export function update(st) {
     if (p.s <= 0.001) continue;
     m.visible = true; m.position.set(p.x, p.y, p.z); m.rotation.set(p.rx || 0, p.ry || 0, p.rz || 0, 'YXZ'); m.scale.setScalar(p.s);
     m.material.emissive = ORANGE; m.material.emissiveIntensity = p.glow || 0;
+    const ghost = (p.alpha ?? 1) < 1; m.material.transparent = ghost; m.material.opacity = p.alpha ?? 1; m.material.depthWrite = !ghost; m.castShadow = !ghost;
   }
   for (const k in hlMeshes) hlMeshes[k].visible = false;
   for (const h of st.hl) { if (h.a <= 0.001) continue; const m = getHL(h.kind, h.sq); m.visible = true; m.material.opacity = Math.min(1, h.a); const sc = h.sc ?? 1; m.scale.set(sc, 1, sc); }

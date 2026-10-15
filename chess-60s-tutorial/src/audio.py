@@ -1,14 +1,16 @@
 """Sound design + light score for "Навчу грати в шахи за 60 секунд". No voice, no samples: everything is synthesized.
 Every piece landing, highlight cascade, beam and text hit is placed from cues.json (exported from script.js),
 so the sound is frame-locked to the animation. 120 BPM grid from t=4.0, key of D minor.
-Usage: python3 audio.py <outdir>  → <outdir>/score.wav (-14 LUFS, true peak ≈ -1.2 dBFS)."""
+Usage: python3 audio.py <outdir> [--part 2]  → <outdir>/score.wav or score2.wav (-14 LUFS, true peak ≈ -1.2 dBFS).
+Part 2 («Ці 3 ходи…») reuses every voice; only the arrangement table below changes."""
 import json, os, sys
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sfxlib import *  # noqa: F401,F403
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-CUES = json.load(open(os.path.join(HERE, 'cues.json')))
+PART = sys.argv[sys.argv.index('--part') + 1] if '--part' in sys.argv else '1'
+CUES = json.load(open(os.path.join(HERE, 'cues.json' if PART == '1' else f'cues{PART}.json')))
 music, sfx, amb = Bus(), Bus(), Bus()
 r = np.random.default_rng(7)
 
@@ -111,6 +113,20 @@ for c in CUES:
         if 2.0 <= t < 59.9:
             g = -27 if t < 52 else -22
             sfx.add(clock_tick(int(c['s']) % 2 == 0), t, g + (6 if t < 4 else 0), 0.25)
+    elif ty == 'rewind':
+        tt_ = tt(0.5); f = 300 * 2 ** (tt_ / 0.5 * 3)
+        sfx.add(np.sin(2 * np.pi * np.cumsum(f) / SR) * (0.4 + 0.6 * (np.sin(2 * np.pi * 28 * tt_) > 0)) * np.hanning(len(tt_)), t, -18)
+        sfx.add(whoosh(0.5, 4000, 300, 0.2)[::-1], t, -12, 0.3)
+    elif ty == 'morph':
+        sfx.add(pop(900 + 300 * r.uniform(), 400, 0.16), t, -10); sfx.add(sparkle(0.4, 10, 3000, 9000, int(t * 10)), t, -18)
+        sfx.add(hit(0.5, 0.3, 0.5, 0.3), t, -16)
+    elif ty == 'check':
+        sfx.add(blip(midi(81)), t, -16, 0.3); sfx.add(pop(1500, 1200, 0.06), t, -20)
+    elif ty == 'promote':
+        sfx.add(sub_boom(2.4, 60, 26), t, -4); sfx.add(hit(1.4, 0.8, 0.8, 0.7), t, -6); sfx.add(shimmer_sweep(1.6), t, -12)
+        sfx.add(choir(chord([62, 69, 74, 78]), 2.2, 0.05, 1.4), t, -20)
+    elif ty == 'queenHit':
+        sfx.add(hit(1.2, 0.9, 0.6, 0.6), t, -6); sfx.add(church_bell(220, 3.0), t, -15); sfx.add(braam(1.8, 45), t, -14)
     elif ty == 'avatar':
         sfx.add(pop(600, 250, 0.25), t, -8); sfx.add(shimmer_sweep(1.0), t, -14); sfx.add(whoosh(0.4, 300, 5000), t - 0.3, -14)
     elif ty == 'type':
@@ -132,13 +148,16 @@ for k in range(8): music.add(sub_boom(0.7, 70, 40) * 0.6, 0.3 + k * 0.5, -14 + k
 BEAT = 0.5
 prog_ = [(50, [62, 65, 69]), (46, [62, 65, 70]), (53, [60, 65, 69]), (48, [60, 64, 67])]   # Dm Bb F C (bass, triad)
 def bar_chord(tb): return prog_[int((tb - 4.0) // 2.0) % 4]
+SECTIONS = {   # (start, kind) — the beat engine below plays each kind differently
+    '1': [(4, 'intro'), (14, 'lesson'), (37, 'check'), (43.5, 'build'), (46.05, 'drop'), (52, 'cta')],
+    '2': [(4, 'intro'), (13.2, 'check'), (20.0, 'lesson'), (35.0, 'build'), (37.9, 'drop'), (42.3, 'check'), (43.5, 'drop'), (52, 'cta')],
+}[PART]
+BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7)}[PART]
 def section(tb):
-    if tb < 14: return 'intro'
-    if tb < 37: return 'lesson'
-    if tb < 43.5: return 'check'
-    if tb < 46.05: return 'build'
-    if tb < 52: return 'drop'
-    return 'cta'
+    s = SECTIONS[0][1]
+    for a, kind in SECTIONS:
+        if tb >= a: s = kind
+    return s
 tb = 4.0
 while tb < 59.0:
     s = section(tb); k = int(round((tb - 4.0) / BEAT)); bass, tri = bar_chord(tb)
@@ -159,25 +178,36 @@ while tb < 59.0:
         if k % 4 == 0: music.add(bass808(midi(38), 1.8, 1.4), tb, -14)
         music.add(clock_tick(k % 2 == 0), tb + BEAT / 2, -26, 0.4)
     elif s == 'build':
-        u = (tb - 43.5) / 2.55
+        u = (tb - BUILD[0]) / (BUILD[1] - BUILD[0] + 0.3)
         rate = 2 if u < 0.5 else 4
         for j in range(rate):
             tt_ = tb + j * BEAT / rate
-            if tt_ < 45.75: music.add(snare(0.2), tt_, -24 + 10 * u, 0.1)
+            if tt_ < BUILD[1]: music.add(snare(0.2), tt_, -24 + 10 * u, 0.1)
     tb += BEAT
 # pads under sections
-music.add(pad(chord([38, 50, 53, 57]), 6.3, 1.5, 1.5, 700), 37.0, -26)                 # check: dark drone
-music.add(pad(chord([38, 45, 50, 53, 57]), 2.6, 0.2, 0.4, 1400), 43.4, -25)
-sfx.add(riser(2.2, 200, 4000), 43.55, -9)
-sfx.add(reverse_swell(0.6), 45.45, -10)
-for k, ch in enumerate([[50, 57, 62, 65], [46, 53, 58, 62], [53, 60, 65, 69]]):
-    music.add(pad(chord(ch), 2.1, 0.1, 0.6, 1600), 46.05 + k * 2.0, -23)
+if PART == '1':
+    music.add(pad(chord([38, 50, 53, 57]), 6.3, 1.5, 1.5, 700), 37.0, -26)                 # check: dark drone
+    music.add(pad(chord([38, 45, 50, 53, 57]), 2.6, 0.2, 0.4, 1400), 43.4, -25)
+    sfx.add(riser(2.2, 200, 4000), 43.55, -9)
+    sfx.add(reverse_swell(0.6), 45.45, -10)
+    for k, ch in enumerate([[50, 57, 62, 65], [46, 53, 58, 62], [53, 60, 65, 69]]):
+        music.add(pad(chord(ch), 2.1, 0.1, 0.6, 1600), 46.05 + k * 2.0, -23)
+else:
+    music.add(pad(chord([38, 50, 53, 57]), 6.8, 1.0, 1.5, 700), 13.2, -26)                 # checklist: calm drone
+    sfx.add(riser(2.6, 200, 4000), 35.1, -10)
+    sfx.add(reverse_swell(0.6), 37.3, -10)
+    for k, ch in enumerate([[50, 57, 62, 66], [55, 62, 67, 71]]):
+        music.add(pad(chord(ch), 2.2, 0.1, 0.6, 1800), 37.9 + k * 2.0, -23)
+    sfx.add(riser(1.1, 300, 5000), 42.4, -11)
+    for k, ch in enumerate([[50, 57, 62, 66], [47, 54, 59, 62], [55, 62, 67, 71], [57, 64, 69, 73]]):
+        music.add(pad(chord(ch), 2.1, 0.1, 0.6, 1800), 43.5 + k * 2.0, -23)
+    amb.add(wind(8.0, 5, 100, 500), 43.5, -22)
 for k, ch in enumerate([[50, 57, 62, 66, 69], [55, 59, 62, 67], [47, 54, 59, 62, 66], [57, 61, 64, 69]]):   # CTA lifts to D major
     music.add(pad(chord(ch), 2.2, 0.3 if k else 0.8, 0.7, 2200), 52.0 + k * 2.0, -23)
 music.add(pad(chord([50, 57, 62, 66]), 1.6, 0.05, 1.4, 1800), 59.0, -22)
 music.add(church_bell(294, 2.5), 59.0, -18)
 amb.add(fire_crackle(8.0, 6, 9), 52.0, -30)
-amb.add(wind(6.5, 5, 100, 500), 46.0, -20)
+if PART == '1': amb.add(wind(6.5, 5, 100, 500), 46.0, -20)
 
 # ------------------------------------------------------------------ mix: duck music under big hits, gap before the mate
 music_n = music.b / (np.max(np.abs(music.b)) + 1e-9)
@@ -185,9 +215,9 @@ duck = np.ones(len(music_n))
 def gap(a, b, depth=0.0, rel=0.25):
     i, j, k = int(a * SR), int(b * SR), int((b + rel) * SR)
     duck[i:j] = np.minimum(duck[i:j], depth); duck[j:k] = np.minimum(duck[j:k], np.linspace(depth, 1, k - j))
-gap(45.8, 46.05, 0.0, 0.05)
+for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)]}[PART]: gap(a_, b_, 0.0, 0.05)
 for c in CUES:
-    if c['type'] in ('slam', 'mate') or (c['type'] == 'land' and c.get('hard')): gap(c['t'], c['t'] + 0.05, 0.45, 0.6)
+    if c['type'] in ('slam', 'mate', 'promote', 'queenHit') or (c['type'] == 'land' and c.get('hard')): gap(c['t'], c['t'] + 0.05, 0.45, 0.6)
 ir_big = reverb_ir(2.4, 0.03, 6000, 5); ir_room = reverb_ir(0.5, 0.01, 7000, 6)
 music_n = reverb(music_n * duck[:, None], ir_big, 0.22)
 sfx.b = reverb(sfx.b, ir_room, 0.25)
@@ -196,9 +226,9 @@ amb.b = reverb(amb.b, ir_room, 0.2)
 full = music_n * db(-8) + sfx.b * db(-3) + amb.b * db(0)
 out = master(full)
 n = int(0.6 * SR); out[-n:] *= np.linspace(1, 0, n)[:, None] ** 1.5
-dst = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, '../output')
+dst = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith('--') else os.path.join(HERE, '../output')
 os.makedirs(dst, exist_ok=True)
-write(os.path.join(dst, 'score.wav'), out)
+write(os.path.join(dst, 'score.wav' if PART == '1' else f'score{PART}.wav'), out)
 if '--stems' in sys.argv:
     for nm, b in (('music', music_n * db(-8)), ('sfx', sfx.b * db(-3)), ('amb', amb.b)):
         rr = [20 * np.log10(np.sqrt(np.mean(b[int(a * SR):int((a + 2) * SR)] ** 2)) + 1e-9) for a in range(0, 60, 2)]

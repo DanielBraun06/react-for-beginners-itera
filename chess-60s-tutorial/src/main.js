@@ -1,6 +1,9 @@
 // Compositor: 3D layer from world.js + 2D typography/FX from lib2d.js. window.renderFrame(t) is deterministic.
 import { update, project, glowCanvas } from './world.js';
-import { stateAt, TEXTS, CUES, B1 } from './script.js';
+// ?part=2 selects the second episode; both share the engine, world and this compositor
+const PART = new URLSearchParams(location.search).get('part') || '1';
+const S = await import(PART === '1' ? './script.js' : `./script${PART}.js`);
+const { stateAt, TEXTS, CUES, B1, FX } = S;
 
 const [gb1, gbx1] = mk(W / 4, H / 4), [gb2, gbx2] = mk(W / 8, H / 8);
 function addGlow(k) {
@@ -15,7 +18,7 @@ const avatar = new Image(); avatar.src = '../assets/avatar.png';
 const col = c => c === 'orange' ? ORANGE : (c || '#fff');
 
 // camera-whip windows → directional blur amount
-const WHIPS = [[3.25, 4.1], [9.55, 10.85], [13.45, 14.25], [18.5, 18.88], [22.0, 22.38], [25.5, 25.88], [29.0, 29.38], [32.5, 32.88], [37.0, 37.45], [43.4, 43.95], [51.9, 53.4]];
+const WHIPS = FX.whips;
 function whipBlur(t) { let b = 0; for (const [a, z] of WHIPS) { const u = prog(t, a, z); if (u > 0 && u < 1) b = Math.max(b, Math.pow(Math.sin(Math.PI * u), 2)); } return b; }
 
 const IMPACTS = [];
@@ -24,6 +27,7 @@ for (const c of CUES) {
   else if (c.type === 'mate') IMPACTS.push([c.t, 30]);
   else if (c.type === 'land' && c.hard) IMPACTS.push([c.t, 16]);
   else if (c.type === 'topple') IMPACTS.push([c.t + 0.62, 10]);
+  else if (c.type === 'promote') IMPACTS.push([c.t, 18]);
 }
 function shake(t) {
   let dx = 0, dy = 0;
@@ -89,6 +93,36 @@ function timer(t) {
   ctx.shadowBlur = 0; setText(ctx, 30, 700, 'Unbounded'); ctx.textAlign = 'center'; ctx.fillStyle = '#fff'; ctx.fillText(String(s), 0, 2);
   ctx.restore();
 }
+// checklist panel (title + items with drawn tick marks), centred over a dimmed board
+function tick(x, y, s, p) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s, s);
+  ctx.fillStyle = ORANGE; ctx.beginPath(); ctx.arc(0, 0, 26, 0, 6.283); ctx.fill();
+  ctx.strokeStyle = '#000'; ctx.lineWidth = 7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+  const L1 = 14, L2 = 26; ctx.beginPath(); ctx.moveTo(-12, 1);
+  const k1 = Math.min(1, p * (L1 + L2) / L1); ctx.lineTo(-12 + 8 * k1, 1 + 9 * k1);
+  if (p * (L1 + L2) > L1) { const k2 = (p * (L1 + L2) - L1) / L2; ctx.lineTo(-4 + 17 * k2, 10 - 20 * k2); }
+  ctx.stroke(); ctx.restore();
+}
+function drawLists(t) {
+  for (const L of FX.lists) {
+    if (t < L.t || t > L.out + 0.4) continue;
+    const out = prog(t, L.out, L.out + 0.35), a = 1 - eInCubic(out);
+    ctx.save(); ctx.globalAlpha = a; ctx.translate(0, -eInCubic(out) * 40);
+    kText(t, L.t, L.title, CX, L.y, { size: 38, weight: 800, fam: 'Montserrat', ls: 6, style: 'fade', dur: 0.4, color: ORANGE });
+    L.items.forEach((str, i) => {
+      const t0 = L.t + 0.45 + i * L.st, p = prog(t, t0, t0 + 0.45); if (p <= 0) return;
+      const y = L.y + 120 + i * 112, e = eOutExpo(p);
+      setText(ctx, 46, 700, 'Montserrat');
+      const size = Math.min(46, 46 * 820 / ctx.measureText(str).width);
+      ctx.save(); ctx.globalAlpha = a * clamp(p * 3); ctx.translate((1 - e) * 80, 0);
+      tick(150, y, eOutBack(clamp(p * 1.6), 2.2), clamp(p * 1.4 - 0.2));
+      setText(ctx, size, 700, 'Montserrat'); ctx.textAlign = 'left'; ctx.fillStyle = '#fff'; ctx.shadowColor = 'rgba(0,0,0,0.9)'; ctx.shadowBlur = 16;
+      ctx.fillText(str, 200, y + 2);
+      ctx.restore();
+    });
+    ctx.restore();
+  }
+}
 function cta(t) {
   if (t < 52) return;
   // avatar
@@ -142,16 +176,18 @@ function renderFrame(t) {
   addGlow(st.light.bloom ?? 1);
   ctx.restore();
   // section dimmer for CTA
-  const dim = prog(t, 52.2, 53.6); if (dim > 0) { ctx.fillStyle = ba(0.5 * dim); ctx.fillRect(0, 0, W, H); }
-  embers(t, t < 4 || (t > 46 && t < 52) ? 0.55 : 0.25, 0.7);
+  let dim = 0.5 * prog(t, 52.2, 53.6);
+  for (const [a, z, k] of FX.dims) dim = Math.max(dim, k * prog(t, a, a + 0.4) * (1 - prog(t, z, z + 0.4)));
+  if (dim > 0) { ctx.fillStyle = ba(dim); ctx.fillRect(0, 0, W, H); }
+  embers(t, FX.hotEmbers.some(([a, z]) => t > a && t < z) ? 0.55 : 0.25, 0.7);
   scrim(t); topScrim(t);
   ctx.save(); ctx.translate(dx * 0.5, dy * 0.5);
-  drawTexts(t); cta(t);
+  drawTexts(t); drawLists(t); cta(t);
   ctx.restore();
   timer(t);
   // flashes
   const fl = (t0, k, c) => { const d = t - t0; if (d >= 0 && d < 0.5) { ctx.fillStyle = c === 'o' ? oa(k * Math.exp(-d * 9)) : wa(k * Math.exp(-d * 9)); ctx.fillRect(0, 0, W, H); } };
-  fl(45.9, 0.75, 'w'); fl(46.05, 0.55, 'o'); fl(38.45, 0.25, 'o'); fl(0.3, 0.3, 'o');
+  for (const [t0, k, c] of FX.flashes) fl(t0, k, c);
   vignette(0.55);
   const fi = 1 - prog(t, 0, 0.15); if (fi > 0) { ctx.fillStyle = ba(fi); ctx.fillRect(0, 0, W, H); }
   grain(t);
