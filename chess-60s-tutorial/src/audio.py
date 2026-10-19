@@ -77,7 +77,7 @@ for c in CUES:
         sfx.add(church_bell(147, 4.0), t + 0.62, -15)
     elif ty == 'blips':
         for k, d in enumerate(c['d']):
-            f = midi(PENTA[min(d, len(PENTA) - 1)] + (0 if c['kind'] == 'fill' else 12))
+            f = midi(PENTA[min(int(round(d)), len(PENTA) - 1)] + (0 if c['kind'] == 'fill' else 12))
             sfx.add(blip(f), t + d * c['st'], -21 - 0.3 * k * (c['n'] > 10), float(np.sin(k * 1.7) * 0.5))
         if c['n'] > 4: sfx.add(shimmer_sweep(min(1.2, 0.3 + c['st'] * 8)), t, -24)
     elif ty == 'beam':
@@ -127,6 +127,11 @@ for c in CUES:
         sfx.add(choir(chord([62, 69, 74, 78]), 2.2, 0.05, 1.4), t, -20)
     elif ty == 'queenHit':
         sfx.add(hit(1.2, 0.9, 0.6, 0.6), t, -6); sfx.add(church_bell(220, 3.0), t, -15); sfx.add(braam(1.8, 45), t, -14)
+    elif ty == 'ratchet':
+        n = int(c['dur'] * 16)
+        for i in range(n): sfx.add(clock_tick(i % 2 == 0), t + c['dur'] * (i / n) ** 0.8, -20 + 6 * i / n, 0.3 * np.sin(i))
+    elif ty == 'counterHit':
+        sfx.add(hit(1.0, 0.7, 0.5, 0.6), t, -8); sfx.add(ding(midi(86), 1.2), t, -16)
     elif ty == 'avatar':
         sfx.add(pop(600, 250, 0.25), t, -8); sfx.add(shimmer_sweep(1.0), t, -14); sfx.add(whoosh(0.4, 300, 5000), t - 0.3, -14)
     elif ty == 'type':
@@ -150,9 +155,10 @@ prog_ = [(50, [62, 65, 69]), (46, [62, 65, 70]), (53, [60, 65, 69]), (48, [60, 6
 def bar_chord(tb): return prog_[int((tb - 4.0) // 2.0) % 4]
 SECTIONS = {   # (start, kind) — the beat engine below plays each kind differently
     '1': [(4, 'intro'), (14, 'lesson'), (37, 'check'), (43.5, 'build'), (46.05, 'drop'), (52, 'cta')],
+    '3': [(4, 'intro'), (19.5, 'lesson'), (46.5, 'drop'), (52, 'cta')],
     '2': [(4, 'intro'), (13.2, 'check'), (20.0, 'lesson'), (35.0, 'build'), (37.9, 'drop'), (42.3, 'check'), (43.5, 'drop'), (52, 'cta')],
 }[PART]
-BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7)}[PART]
+BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7), '3': (0, 0)}[PART]
 def section(tb):
     s = SECTIONS[0][1]
     for a, kind in SECTIONS:
@@ -192,6 +198,11 @@ if PART == '1':
     sfx.add(reverse_swell(0.6), 45.45, -10)
     for k, ch in enumerate([[50, 57, 62, 65], [46, 53, 58, 62], [53, 60, 65, 69]]):
         music.add(pad(chord(ch), 2.1, 0.1, 0.6, 1600), 46.05 + k * 2.0, -23)
+elif PART == '3':
+    sfx.add(riser(1.0, 300, 4000), 11.7, -12)
+    music.add(pad(chord([38, 50, 53, 57]), 4.0, 0.3, 1.5, 800), 12.7, -24)
+    for k, ch in enumerate([[50, 57, 62, 66], [46, 53, 58, 62], [55, 62, 67, 71]]):
+        music.add(pad(chord(ch), 2.0, 0.1, 0.6, 1800), 46.5 + k * 2.0, -23)
 else:
     music.add(pad(chord([38, 50, 53, 57]), 6.8, 1.0, 1.5, 700), 13.2, -26)                 # checklist: calm drone
     sfx.add(riser(2.6, 200, 4000), 35.1, -10)
@@ -215,9 +226,9 @@ duck = np.ones(len(music_n))
 def gap(a, b, depth=0.0, rel=0.25):
     i, j, k = int(a * SR), int(b * SR), int((b + rel) * SR)
     duck[i:j] = np.minimum(duck[i:j], depth); duck[j:k] = np.minimum(duck[j:k], np.linspace(depth, 1, k - j))
-for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)]}[PART]: gap(a_, b_, 0.0, 0.05)
+for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)], '3': [(12.45, 12.7)]}[PART]: gap(a_, b_, 0.0, 0.05)
 for c in CUES:
-    if c['type'] in ('slam', 'mate', 'promote', 'queenHit') or (c['type'] == 'land' and c.get('hard')): gap(c['t'], c['t'] + 0.05, 0.45, 0.6)
+    if c['type'] in ('slam', 'mate', 'promote', 'queenHit', 'counterHit') or (c['type'] == 'land' and c.get('hard')): gap(c['t'], c['t'] + 0.05, 0.45, 0.6)
 ir_big = reverb_ir(2.4, 0.03, 6000, 5); ir_room = reverb_ir(0.5, 0.01, 7000, 6)
 music_n = reverb(music_n * duck[:, None], ir_big, 0.22)
 sfx.b = reverb(sfx.b, ir_room, 0.25)

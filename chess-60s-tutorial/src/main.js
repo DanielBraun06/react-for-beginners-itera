@@ -58,6 +58,13 @@ function drawTexts(t) {
       plashka(t, x.t, x.str, CX, x.y, { size, dur: 0.45, out: x.out, rot: x.rot || 0 });
     } else if (x.k === 'b') bodyText(t, x);
     else if (x.k === 'label') kText(t, x.t, x.str, CX, x.y, { size: x.size, weight: 800, fam: 'Montserrat', ls: 10, style: 'fade', dur: 0.4, out: x.out, color: ORANGE });
+    else if (x.k === 'counter') {   // rolling number (e.g. the 50-move rule)
+      const p = prog(t, x.t, x.t + x.dur), n = Math.round(lerp(x.from, x.to, p * p * (3 - 2 * p)));
+      const out = prog(t, x.out, x.out + 0.3), pop = 1 + 0.08 * Math.exp(-((t * 30) % 1) * 3) * (p < 1 ? 1 : 0);
+      if (out < 1) { ctx.save(); ctx.globalAlpha = (1 - eInCubic(out)) * clamp(prog(t, x.t, x.t + 0.15)); ctx.translate(CX, x.y - eInCubic(out) * 60); ctx.scale(pop, pop);
+        setText(ctx, x.size, 900, 'Unbounded'); ctx.textAlign = 'center'; ctx.fillStyle = p >= 1 ? ORANGE : '#fff'; ctx.shadowColor = ORANGE; ctx.shadowBlur = p >= 1 ? 60 : 20;
+        ctx.fillText(String(n), 0, 0); ctx.restore(); }
+    }
     else if (x.k === 'strike') {
       const size = fitSize(x.str, 960, x.size, 900, 'Unbounded'); setText(ctx, size, 900, 'Unbounded'); const w = ctx.measureText(x.str).width + 30;
       const p = eOutExpo(prog(t, x.t, x.t + 0.4)), out = prog(t, x.out, x.out + 0.3);
