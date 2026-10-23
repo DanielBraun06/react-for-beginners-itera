@@ -155,10 +155,11 @@ prog_ = [(50, [62, 65, 69]), (46, [62, 65, 70]), (53, [60, 65, 69]), (48, [60, 6
 def bar_chord(tb): return prog_[int((tb - 4.0) // 2.0) % 4]
 SECTIONS = {   # (start, kind) — the beat engine below plays each kind differently
     '1': [(4, 'intro'), (14, 'lesson'), (37, 'check'), (43.5, 'build'), (46.05, 'drop'), (52, 'cta')],
+    '4': [(4, 'intro'), (6.5, 'lesson'), (41, 'check'), (52, 'cta')],
     '3': [(4, 'intro'), (19.5, 'lesson'), (46.5, 'drop'), (52, 'cta')],
     '2': [(4, 'intro'), (13.2, 'check'), (20.0, 'lesson'), (35.0, 'build'), (37.9, 'drop'), (42.3, 'check'), (43.5, 'drop'), (52, 'cta')],
 }[PART]
-BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7), '3': (0, 0)}[PART]
+BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7), '3': (0, 0), '4': (0, 0)}[PART]
 def section(tb):
     s = SECTIONS[0][1]
     for a, kind in SECTIONS:
@@ -198,6 +199,9 @@ if PART == '1':
     sfx.add(reverse_swell(0.6), 45.45, -10)
     for k, ch in enumerate([[50, 57, 62, 65], [46, 53, 58, 62], [53, 60, 65, 69]]):
         music.add(pad(chord(ch), 2.1, 0.1, 0.6, 1600), 46.05 + k * 2.0, -23)
+elif PART == '4':
+    music.add(pad(chord([38, 50, 53, 57]), 3.6, 0.4, 1.2, 900), 0.4, -26)
+    music.add(pad(chord([38, 50, 53, 57, 62]), 10.8, 1.0, 1.5, 900), 41.0, -26)
 elif PART == '3':
     sfx.add(riser(1.0, 300, 4000), 11.7, -12)
     music.add(pad(chord([38, 50, 53, 57]), 4.0, 0.3, 1.5, 800), 12.7, -24)
@@ -226,7 +230,7 @@ duck = np.ones(len(music_n))
 def gap(a, b, depth=0.0, rel=0.25):
     i, j, k = int(a * SR), int(b * SR), int((b + rel) * SR)
     duck[i:j] = np.minimum(duck[i:j], depth); duck[j:k] = np.minimum(duck[j:k], np.linspace(depth, 1, k - j))
-for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)], '3': [(12.45, 12.7)]}[PART]: gap(a_, b_, 0.0, 0.05)
+for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)], '3': [(12.45, 12.7)], '4': []}[PART]: gap(a_, b_, 0.0, 0.05)
 for c in CUES:
     if c['type'] in ('slam', 'mate', 'promote', 'queenHit', 'counterHit') or (c['type'] == 'land' and c.get('hard')): gap(c['t'], c['t'] + 0.05, 0.45, 0.6)
 ir_big = reverb_ir(2.4, 0.03, 6000, 5); ir_room = reverb_ir(0.5, 0.01, 7000, 6)
