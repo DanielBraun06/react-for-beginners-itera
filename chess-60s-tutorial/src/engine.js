@@ -162,12 +162,12 @@ export function createEngine() {
       else if (x.k === 'label') cue(x.t, 'label');
     }
   }
-  function finish(TEXTS, LISTS = []) {
+  function finish(TEXTS, LISTS = [], opts = {}) {
     textCues(TEXTS);
     for (const L of LISTS) { cue(L.t, 'label'); L.items.forEach((_, i) => cue(L.t + 0.45 + i * L.st, 'check')); }
-    // CTA cues (drawn in main.js)
-    cue(54.3, 'avatar'); cue(55.0, 'type', { n: 13, dur: 0.75 }); cue(55.85, 'body'); cue(56.6, 'button'); cue(57.45, 'tap');
-    for (let s = 59; s >= 2; s--) cue(60 - s, 'timer', { s });   // timer digit changes (60−t crosses an integer)
+    // CTA cues (drawn in main.js); looped parts set { cta: false, timer: false }
+    if (opts.cta !== false) { cue(54.3, 'avatar'); cue(55.0, 'type', { n: 13, dur: 0.75 }); cue(55.85, 'body'); cue(56.6, 'button'); cue(57.45, 'tap'); }
+    if (opts.timer !== false) for (let s = 59; s >= 2; s--) cue(60 - s, 'timer', { s });   // timer digit changes (60−t crosses an integer)
     CUES.sort((a, b) => a.t - b.t);
   }
 

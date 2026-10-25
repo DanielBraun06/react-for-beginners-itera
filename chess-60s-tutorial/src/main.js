@@ -4,6 +4,7 @@ import { update, project, glowCanvas } from './world.js';
 const PART = new URLSearchParams(location.search).get('part') || '1';
 const S = await import(PART === '1' ? './script.js' : `./script${PART}.js`);
 const { stateAt, TEXTS, CUES, B1, FX } = S;
+window.DUR = S.DUR ?? 60;
 
 const [gb1, gbx1] = mk(W / 4, H / 4), [gb2, gbx2] = mk(W / 8, H / 8);
 function addGlow(k) {
@@ -89,6 +90,7 @@ function scrim(t) {
   ctx.fillStyle = g; ctx.fillRect(0, B1 - 170, W, H);
 }
 function timer(t) {
+  if (FX.timer === false) return;
   const ap = prog(t, 2.0, 2.4); if (ap <= 0) return;
   const s = Math.max(0, Math.floor(60 - t + 1e-6)), frac = (60 - t) - Math.floor(60 - t);
   const x = CX, y = 196, r = 40, sc = eOutBack(ap, 2.2) * (1 + 0.12 * Math.exp(-(1 - frac) * 14));
@@ -131,7 +133,7 @@ function drawLists(t) {
   }
 }
 function cta(t) {
-  if (t < 52) return;
+  if (FX.cta === false || t < 52) return;
   // avatar
   const ap = eOutBack(prog(t, 54.3, 54.75), 1.8);
   const ax = CX, ay = 850, R = 165;
@@ -183,7 +185,7 @@ function renderFrame(t) {
   addGlow(st.light.bloom ?? 1);
   ctx.restore();
   // section dimmer for CTA
-  let dim = 0.5 * prog(t, 52.2, 53.6);
+  let dim = FX.cta === false ? 0 : 0.5 * prog(t, 52.2, 53.6);
   for (const [a, z, k] of FX.dims) dim = Math.max(dim, k * prog(t, a, a + 0.4) * (1 - prog(t, z, z + 0.4)));
   if (dim > 0) { ctx.fillStyle = ba(dim); ctx.fillRect(0, 0, W, H); }
   embers(t, FX.hotEmbers.some(([a, z]) => t > a && t < z) ? 0.55 : 0.25, 0.7);
@@ -196,7 +198,7 @@ function renderFrame(t) {
   const fl = (t0, k, c) => { const d = t - t0; if (d >= 0 && d < 0.5) { ctx.fillStyle = c === 'o' ? oa(k * Math.exp(-d * 9)) : wa(k * Math.exp(-d * 9)); ctx.fillRect(0, 0, W, H); } };
   for (const [t0, k, c] of FX.flashes) fl(t0, k, c);
   vignette(0.55);
-  const fi = 1 - prog(t, 0, 0.15); if (fi > 0) { ctx.fillStyle = ba(fi); ctx.fillRect(0, 0, W, H); }
+  const fi = FX.fadeIn === false ? 0 : 1 - prog(t, 0, 0.15); if (fi > 0) { ctx.fillStyle = ba(fi); ctx.fillRect(0, 0, W, H); }
   grain(t);
   ctx.restore();
 }

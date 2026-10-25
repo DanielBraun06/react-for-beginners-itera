@@ -4,7 +4,7 @@ import fs from 'fs'; import path from 'path'; import http from 'http'; import { 
 const require = createRequire(import.meta.url);
 let pw; try { pw = require('playwright'); } catch { pw = require('/opt/node22/lib/node_modules/playwright'); }
 const here = path.dirname(fileURLToPath(import.meta.url)), root = path.join(here, '..');
-const FPS = 30, DUR = 60;
+const FPS = 30;
 const PART = process.env.PART || '1';   // PART=2 node render.mjs …  renders the second episode
 const MIME = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.woff2': 'font/woff2', '.png': 'image/png', '.json': 'application/json' };
 const server = http.createServer((req, res) => {
@@ -35,11 +35,12 @@ if (mode === 'stills') {
   fs.writeFileSync(path.join(here, PART === '1' ? 'cues.json' : `cues${PART}.json`), JSON.stringify(cues, null, 0)); console.log(cues.length, 'cues');
 } else if (mode === 'frames') {
   const out = process.argv[3]; const nw = parseInt(process.argv[4] || '2'); fs.mkdirSync(out, { recursive: true });
-  const from = parseInt(process.argv[5] || '0'), N = parseInt(process.argv[6] || String(DUR * FPS)); const t0 = Date.now();
+  const from = parseInt(process.argv[5] || '0'); let N = parseInt(process.argv[6] || '0'); const t0 = Date.now();
   let next = from;
   await Promise.all([...Array(nw)].map(async () => {
     const ctx = await browser.newContext({ viewport: { width: 1080, height: 1920 } });
     const page = await openPage(ctx);
+    if (!N) N = Math.round((await page.evaluate(() => window.DUR || 60)) * FPS);   // part length comes from the scenario
     while (true) { const i = next++; if (i >= N) break; const f = path.join(out, `f${String(i).padStart(4, '0')}.png`); if (fs.existsSync(f)) continue; const d = await grab(page, i / FPS); fs.writeFileSync(f + '.tmp', Buffer.from(d.split(',')[1], 'base64')); fs.renameSync(f + '.tmp', f); if (i % 30 === 0) console.log(`frame ${i}/${N} ${((Date.now() - t0) / 1000).toFixed(0)}s`); }
   }));
 }

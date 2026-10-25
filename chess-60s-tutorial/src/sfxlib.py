@@ -6,7 +6,7 @@ from scipy import signal
 SR = 48000
 HERE = os.path.dirname(os.path.abspath(__file__))
 TL = json.load(open(os.path.join(HERE, 'timeline.json')))
-DUR = TL['duration']
+DUR = float(os.environ.get('REEL_DUR', TL['duration']))   # shorter parts set REEL_DUR
 N = int(DUR * SR) + SR  # 1s tail headroom
 rng = np.random.default_rng(1234)
 
@@ -55,6 +55,7 @@ class Bus:
         if x.ndim == 1: x = pan(x, p)
         i = int(round(t * SR))
         if i < 0: x = x[-i:]; i = 0
+        if i >= N: return   # starts after the end of the timeline
         j = min(N, i + len(x)); s.b[i:j] += x[:j - i] * db(gain_db)
 
 def reverb_ir(t60=2.2, pre=0.02, bright=6000, seed=5):

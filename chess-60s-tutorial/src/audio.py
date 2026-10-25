@@ -6,6 +6,8 @@ Part 2 («Ці 3 ходи…») reuses every voice; only the arrangement table b
 import json, os, sys
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+_PART = sys.argv[sys.argv.index('--part') + 1] if '--part' in sys.argv else '1'
+if _PART == '5': os.environ['REEL_DUR'] = '35'   # part 5 is a 35 s loop
 from sfxlib import *  # noqa: F401,F403
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -145,29 +147,32 @@ for c in CUES:
 
 # ------------------------------------------------------------------ hook (0–4): tension before the beat
 sfx.add(reverse_swell(0.35), -0.05, -12)
-sfx.add(riser(1.6, 220, 3000), 2.45, -12)
-amb.add(wind(4.2, 3, 150, 700), 0.0, -14)
-for k in range(8): music.add(sub_boom(0.7, 70, 40) * 0.6, 0.3 + k * 0.5, -14 + k * 0.6)   # heartbeat pulse
+HAS_CTA = PART in ('1', '2', '3', '4')          # part 5 loops back into its hook instead of a CTA
+BEAT0 = 3.0 if PART == '5' else 4.0             # where the 120 BPM grid starts
+sfx.add(riser(1.6, 220, 3000), BEAT0 - 1.55, -12)
+amb.add(wind(BEAT0 + 0.2, 3, 150, 700), 0.0, -14)
+for k in range(int((BEAT0 - 0.3) / 0.5) + 1): music.add(sub_boom(0.7, 70, 40) * 0.6, 0.3 + k * 0.5, -14 + k * 0.6)   # heartbeat pulse
 
 # ------------------------------------------------------------------ beat: 120 BPM from t=4.0
 BEAT = 0.5
 prog_ = [(50, [62, 65, 69]), (46, [62, 65, 70]), (53, [60, 65, 69]), (48, [60, 64, 67])]   # Dm Bb F C (bass, triad)
-def bar_chord(tb): return prog_[int((tb - 4.0) // 2.0) % 4]
+def bar_chord(tb): return prog_[int((tb - BEAT0) // 2.0) % 4]
 SECTIONS = {   # (start, kind) — the beat engine below plays each kind differently
     '1': [(4, 'intro'), (14, 'lesson'), (37, 'check'), (43.5, 'build'), (46.05, 'drop'), (52, 'cta')],
+    '5': [(3, 'lesson')],
     '4': [(4, 'intro'), (6.5, 'lesson'), (41, 'check'), (52, 'cta')],
     '3': [(4, 'intro'), (19.5, 'lesson'), (46.5, 'drop'), (52, 'cta')],
     '2': [(4, 'intro'), (13.2, 'check'), (20.0, 'lesson'), (35.0, 'build'), (37.9, 'drop'), (42.3, 'check'), (43.5, 'drop'), (52, 'cta')],
 }[PART]
-BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7), '3': (0, 0), '4': (0, 0)}[PART]
+BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7), '3': (0, 0), '4': (0, 0), '5': (0, 0)}[PART]
 def section(tb):
     s = SECTIONS[0][1]
     for a, kind in SECTIONS:
         if tb >= a: s = kind
     return s
-tb = 4.0
-while tb < 59.0:
-    s = section(tb); k = int(round((tb - 4.0) / BEAT)); bass, tri = bar_chord(tb)
+tb = BEAT0
+while tb < DUR - 1.0:
+    s = section(tb); k = int(round((tb - BEAT0) / BEAT)); bass, tri = bar_chord(tb)
     if s in ('intro', 'lesson', 'drop', 'cta'):
         music.add(kick(), tb, -9 if s != 'intro' or k % 2 == 0 else -14)
         music.add(hat(), tb + BEAT / 2, -22, 0.3)
@@ -217,11 +222,16 @@ else:
     for k, ch in enumerate([[50, 57, 62, 66], [47, 54, 59, 62], [55, 62, 67, 71], [57, 64, 69, 73]]):
         music.add(pad(chord(ch), 2.1, 0.1, 0.6, 1800), 43.5 + k * 2.0, -23)
     amb.add(wind(8.0, 5, 100, 500), 43.5, -22)
-for k, ch in enumerate([[50, 57, 62, 66, 69], [55, 59, 62, 67], [47, 54, 59, 62, 66], [57, 61, 64, 69]]):   # CTA lifts to D major
-    music.add(pad(chord(ch), 2.2, 0.3 if k else 0.8, 0.7, 2200), 52.0 + k * 2.0, -23)
-music.add(pad(chord([50, 57, 62, 66]), 1.6, 0.05, 1.4, 1800), 59.0, -22)
-music.add(church_bell(294, 2.5), 59.0, -18)
-amb.add(fire_crackle(8.0, 6, 9), 52.0, -30)
+if HAS_CTA:
+    for k, ch in enumerate([[50, 57, 62, 66, 69], [55, 59, 62, 67], [47, 54, 59, 62, 66], [57, 61, 64, 69]]):   # CTA lifts to D major
+        music.add(pad(chord(ch), 2.2, 0.3 if k else 0.8, 0.7, 2200), 52.0 + k * 2.0, -23)
+    music.add(pad(chord([50, 57, 62, 66]), 1.6, 0.05, 1.4, 1800), 59.0, -22)
+    music.add(church_bell(294, 2.5), 59.0, -18)
+    amb.add(fire_crackle(8.0, 6, 9), 52.0, -30)
+else:
+    # loop seam: the last bar swells straight into the hook hit at t≈0.15
+    sfx.add(reverse_swell(0.9), DUR - 0.9, -10)
+    sfx.add(riser(1.4, 300, 4000), DUR - 1.4, -14)
 if PART == '1': amb.add(wind(6.5, 5, 100, 500), 46.0, -20)
 
 # ------------------------------------------------------------------ mix: duck music under big hits, gap before the mate
@@ -230,7 +240,7 @@ duck = np.ones(len(music_n))
 def gap(a, b, depth=0.0, rel=0.25):
     i, j, k = int(a * SR), int(b * SR), int((b + rel) * SR)
     duck[i:j] = np.minimum(duck[i:j], depth); duck[j:k] = np.minimum(duck[j:k], np.linspace(depth, 1, k - j))
-for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)], '3': [(12.45, 12.7)], '4': []}[PART]: gap(a_, b_, 0.0, 0.05)
+for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)], '3': [(12.45, 12.7)], '4': [], '5': []}[PART]: gap(a_, b_, 0.0, 0.05)
 for c in CUES:
     if c['type'] in ('slam', 'mate', 'promote', 'queenHit', 'counterHit') or (c['type'] == 'land' and c.get('hard')): gap(c['t'], c['t'] + 0.05, 0.45, 0.6)
 ir_big = reverb_ir(2.4, 0.03, 6000, 5); ir_room = reverb_ir(0.5, 0.01, 7000, 6)
@@ -238,14 +248,15 @@ music_n = reverb(music_n * duck[:, None], ir_big, 0.22)
 sfx.b = reverb(sfx.b, ir_room, 0.25)
 sfx.b = reverb(sfx.b, ir_big, 0.1)
 amb.b = reverb(amb.b, ir_room, 0.2)
-full = music_n * db(-8) + sfx.b * db(-3) + amb.b * db(0)
+MUSIC_DB = -10 if PART == '5' else -8   # the loop has fewer hits, so the beat sits a little lower
+full = music_n * db(MUSIC_DB) + sfx.b * db(-3) + amb.b * db(0)
 out = master(full)
-n = int(0.6 * SR); out[-n:] *= np.linspace(1, 0, n)[:, None] ** 1.5
+if HAS_CTA: n = int(0.6 * SR); out[-n:] *= np.linspace(1, 0, n)[:, None] ** 1.5   # loops end at full level
 dst = sys.argv[1] if len(sys.argv) > 1 and not sys.argv[1].startswith('--') else os.path.join(HERE, '../output')
 os.makedirs(dst, exist_ok=True)
 write(os.path.join(dst, 'score.wav' if PART == '1' else f'score{PART}.wav'), out)
 if '--stems' in sys.argv:
-    for nm, b in (('music', music_n * db(-8)), ('sfx', sfx.b * db(-3)), ('amb', amb.b)):
-        rr = [20 * np.log10(np.sqrt(np.mean(b[int(a * SR):int((a + 2) * SR)] ** 2)) + 1e-9) for a in range(0, 60, 2)]
+    for nm, b in (('music', music_n * db(MUSIC_DB)), ('sfx', sfx.b * db(-3)), ('amb', amb.b)):
+        rr = [20 * np.log10(np.sqrt(np.mean(b[int(a * SR):int((a + 2) * SR)] ** 2)) + 1e-9) for a in range(0, int(DUR), 2)]
         print(nm.ljust(6), ' '.join(f'{x:5.0f}' for x in rr))
 print('done')
