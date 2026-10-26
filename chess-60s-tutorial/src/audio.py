@@ -7,7 +7,7 @@ import json, os, sys
 import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 _PART = sys.argv[sys.argv.index('--part') + 1] if '--part' in sys.argv else '1'
-if _PART == '5': os.environ['REEL_DUR'] = '35'   # part 5 is a 35 s loop
+if _PART in ('5', '6'): os.environ['REEL_DUR'] = '35'   # parts 5–6 are 35 s loops
 from sfxlib import *  # noqa: F401,F403
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -148,7 +148,7 @@ for c in CUES:
 # ------------------------------------------------------------------ hook (0–4): tension before the beat
 sfx.add(reverse_swell(0.35), -0.05, -12)
 HAS_CTA = PART in ('1', '2', '3', '4')          # part 5 loops back into its hook instead of a CTA
-BEAT0 = 3.0 if PART == '5' else 4.0             # where the 120 BPM grid starts
+BEAT0 = 3.0 if PART in ('5', '6') else 4.0             # where the 120 BPM grid starts
 sfx.add(riser(1.6, 220, 3000), BEAT0 - 1.55, -12)
 amb.add(wind(BEAT0 + 0.2, 3, 150, 700), 0.0, -14)
 for k in range(int((BEAT0 - 0.3) / 0.5) + 1): music.add(sub_boom(0.7, 70, 40) * 0.6, 0.3 + k * 0.5, -14 + k * 0.6)   # heartbeat pulse
@@ -160,11 +160,12 @@ def bar_chord(tb): return prog_[int((tb - BEAT0) // 2.0) % 4]
 SECTIONS = {   # (start, kind) — the beat engine below plays each kind differently
     '1': [(4, 'intro'), (14, 'lesson'), (37, 'check'), (43.5, 'build'), (46.05, 'drop'), (52, 'cta')],
     '5': [(3, 'lesson')],
+    '6': [(3, 'lesson')],
     '4': [(4, 'intro'), (6.5, 'lesson'), (41, 'check'), (52, 'cta')],
     '3': [(4, 'intro'), (19.5, 'lesson'), (46.5, 'drop'), (52, 'cta')],
     '2': [(4, 'intro'), (13.2, 'check'), (20.0, 'lesson'), (35.0, 'build'), (37.9, 'drop'), (42.3, 'check'), (43.5, 'drop'), (52, 'cta')],
 }[PART]
-BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7), '3': (0, 0), '4': (0, 0), '5': (0, 0)}[PART]
+BUILD = {'1': (43.5, 45.75), '2': (35.0, 37.7), '3': (0, 0), '4': (0, 0), '5': (0, 0), '6': (0, 0)}[PART]
 def section(tb):
     s = SECTIONS[0][1]
     for a, kind in SECTIONS:
@@ -240,7 +241,7 @@ duck = np.ones(len(music_n))
 def gap(a, b, depth=0.0, rel=0.25):
     i, j, k = int(a * SR), int(b * SR), int((b + rel) * SR)
     duck[i:j] = np.minimum(duck[i:j], depth); duck[j:k] = np.minimum(duck[j:k], np.linspace(depth, 1, k - j))
-for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)], '3': [(12.45, 12.7)], '4': [], '5': []}[PART]: gap(a_, b_, 0.0, 0.05)
+for a_, b_ in {'1': [(45.8, 46.05)], '2': [(37.7, 37.9), (43.3, 43.5)], '3': [(12.45, 12.7)], '4': [], '5': [], '6': []}[PART]: gap(a_, b_, 0.0, 0.05)
 for c in CUES:
     if c['type'] in ('slam', 'mate', 'promote', 'queenHit', 'counterHit') or (c['type'] == 'land' and c.get('hard')): gap(c['t'], c['t'] + 0.05, 0.45, 0.6)
 ir_big = reverb_ir(2.4, 0.03, 6000, 5); ir_room = reverb_ir(0.5, 0.01, 7000, 6)
@@ -248,7 +249,7 @@ music_n = reverb(music_n * duck[:, None], ir_big, 0.22)
 sfx.b = reverb(sfx.b, ir_room, 0.25)
 sfx.b = reverb(sfx.b, ir_big, 0.1)
 amb.b = reverb(amb.b, ir_room, 0.2)
-MUSIC_DB = -10 if PART == '5' else -8   # the loop has fewer hits, so the beat sits a little lower
+MUSIC_DB = -10 if PART in ('5', '6') else -8   # the loop has fewer hits, so the beat sits a little lower
 full = music_n * db(MUSIC_DB) + sfx.b * db(-3) + amb.b * db(0)
 out = master(full)
 if HAS_CTA: n = int(0.6 * SR); out[-n:] *= np.linspace(1, 0, n)[:, None] ** 1.5   # loops end at full level
