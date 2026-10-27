@@ -1,3 +1,6 @@
 chess-history-reel/output/stills/
 chess-history-reel/output/*.wav
 __pycache__/
+pawn-reel/node_modules/
+pawn-reel/output/stills/
+pawn-reel/output/*.wav
