@@ -18,10 +18,10 @@
   .status .r{display:flex;gap:10px;align-items:center}
   .bat{width:44px;height:22px;border:2px solid rgba(255,255,255,.7);border-radius:6px;position:relative}
   .bat::after{content:"";position:absolute;left:2px;top:2px;bottom:2px;width:9px;background:#e5483a;border-radius:2px}
-  #lock{position:absolute;inset:0;background:radial-gradient(500px 600px at 30% 20%,#3b2a6b,#160f2c 60%,#07060f);z-index:20}
+  #lock{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0) 35%,rgba(0,0,0,0) 70%,rgba(0,0,0,.45)),url(assets/wallpaper.jpg) center/cover;z-index:20}
   #lockTime{position:absolute;top:150px;width:100%;text-align:center;color:#fff;font-size:170px;font-weight:600;letter-spacing:-4px}
   #lockDate{position:absolute;top:120px;width:100%;text-align:center;color:rgba(255,255,255,.8);font-size:30px;font-weight:600}
-  #notif{position:absolute;left:24px;right:24px;top:480px;border-radius:36px;padding:24px 26px;background:rgba(40,40,52,.78);box-shadow:0 10px 40px rgba(0,0,0,.4);color:#fff;display:flex;gap:20px}
+  #notif{position:absolute;left:24px;right:24px;top:880px;border-radius:36px;padding:24px 26px;background:rgba(40,40,52,.78);box-shadow:0 10px 40px rgba(0,0,0,.4);color:#fff;display:flex;gap:20px}
   #notif .ic{width:72px;height:72px;border-radius:18px;background:linear-gradient(#5fd068,#2fae46);flex:none;display:flex;align-items:center;justify-content:center;font-size:40px}
   #notif .h{display:flex;justify-content:space-between;font-size:28px;font-weight:700}
   #notif .h span{font-weight:500;color:rgba(255,255,255,.55);font-size:24px}
@@ -294,9 +294,9 @@ function seek(t){
   const on=t<0.5?0:eOut(p(t,0.5,0.7));
   $("screenOff").style.opacity=1-on;
   const dc=mapPt(H.desk,SW/2,SH/2);
-  $("glowDesk").style.background=`radial-gradient(420px 360px at ${dc[0]}px ${dc[1]}px, rgba(120,110,230,${.45*on}), rgba(90,90,200,${.15*on}) 50%, transparent 80%)`;
+  $("glowDesk").style.background=`radial-gradient(420px 360px at ${dc[0]}px ${dc[1]}px, rgba(255,160,110,${.4*on}), rgba(220,120,90,${.13*on}) 50%, transparent 80%)`;
   const hc=mapPt(H.hand,SW/2,SH/2);
-  $("glowHand").style.background=`radial-gradient(520px 700px at ${hc[0]}px ${hc[1]}px, rgba(${t<7?"140,120,240":"150,190,130"},.22), transparent 75%)`;
+  $("glowHand").style.background=`radial-gradient(520px 700px at ${hc[0]}px ${hc[1]}px, rgba(${t<6?"255,170,120":"150,190,130"},.22), transparent 75%)`;
 
   const un=eIO(p(t,5.55,5.95));
   $("lock").style.transform=`translateY(${-un*1200}px)`;$("lock").style.display=un>=1?"none":"block";
