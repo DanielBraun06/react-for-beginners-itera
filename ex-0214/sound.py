@@ -1,6 +1,6 @@
 # Процедурний sound design → audio.wav (48 kHz stereo). Без голосів.
 import numpy as np, wave
-SR=48000; DUR=20.0; N=int(SR*DUR)
+SR=48000; DUR=45.0; N=int(SR*DUR)
 L=np.zeros(N); R=np.zeros(N)
 rng=np.random.default_rng(7)
 def add(sig,t,g=1.0,pan=0.0):
@@ -46,56 +46,75 @@ def pad(freqs,d,cut=900):
     a=np.minimum(1,t/1.2)*np.minimum(1,(d-t)/0.8)
     return lpf(s/len(freqs),cut)*a
 
-# --- атмосфера кімнати: низький гул + шум ---
+# --- атмосфера кімнати ---
 amb=lpf(rng.standard_normal(N),220)*0.18+np.sin(2*np.pi*50*tt(DUR))*0.01
 add(amb,0,1.0)
-# --- музика: темний пед (Am-F-C-E) + біт з 8.4 до 15, ехо-хвіст після ---
+# --- музика: темний пед Am-F-C-E весь ролик; біт під партію 10.0–32.0, розгін ближче до мату ---
 chords=[[110,130.8,164.8],[87.3,130.8,174.6],[98,130.8,164.8],[82.4,123.5,164.8]]
-bar=60/100*4  # 100 bpm
+bar=60/100*4
 tcur=0.0; ci=0
-while tcur<20:
-    d=bar+.6; g=0.22 if tcur<8.4 else (0.3 if tcur<15 else 0.2)
-    cut=500 if tcur<8 else (1100 if tcur<15 else 700)
+while tcur<45:
+    d=bar+.6
+    g=0.22 if tcur<9.6 else (0.3 if tcur<32 else (0.16 if tcur<38.5 else 0.24))
+    cut=500 if tcur<9.6 else (1100 if tcur<32 else (500 if tcur<38.5 else 900))
     add(pad(chords[ci%4],d,cut),tcur,g,pan=(-.2 if ci%2 else .2)); tcur+=bar; ci+=1
 beat=60/100
-t0=8.4
-k=0
-while t0+k*beat/2<15.0:
-    tb=t0+k*beat/2
-    if k%2==0: add(kick(),tb,.55)
-    add(hat(),tb+beat/4,.12,pan=.3)
-    if k%4==2: add(lpf(rng.standard_normal(int(.18*SR)),3500)*env(.18,.001,.05),tb,.22)  # snare
-    k+=1
-# --- SFX по подіях ---
-add(bell(1318.5,1.0),0.42,.35,.1); add(bell(1760,1.0),0.56,.30,.1)          # сповіщення
-add(boom(50,1.8),0.62,.55); add(whoosh(.5),0.38,.25)                         # хук-удар під напис
-add(whoosh(.8),3.85,.5,-.2); add(lpf(rng.standard_normal(int(.5*SR)),1500)*env(.5,.05,.15),4.0,.2)  # підняв телефон
-add(whoosh(.45,bright=5000),4.95,.35,.2); add(click(.02,6000),5.38,.4)       # свайп-розблокування
-add(click(.03,3500),5.8,.6); add(pop(900),5.82,.25)                          # тап по іконці
-add(whoosh(.45,bright=4000),5.95,.45); add(pop(500),6.3,.3)                  # відкриття застосунку
-for i,tw in enumerate([6.35,6.45,6.55,6.75,6.85]): add(click(.02,7000),tw,.12)
-add(riser(.6),7.85,.35); add(boom(60,1.0),8.4,.4); add(whoosh(.6),8.0,.4)  # наїзд камери
-MOVES=[(8.55,'w'),(10.15,'b'),(11.75,'w'),(13.25,'b')]; MD=.38
-for tm,c in MOVES:
-    if c=='w': add(click(.025,5000),tm-.35,.35); add(click(.025,5000),tm,.35)
-    add(clack(),tm+MD,.7,pan=.1)
-add(pop(1200),8.55+MD+.05,.2)                                                # бейдж ?!
-# зівок ?? — сумний спадний синт
-t=tt(.9); fr=330*np.exp(-t*0.9); s=np.sign(np.sin(2*np.pi*np.cumsum(fr)/SR))*env(.9,.01,.35)
-add(lpf(s,1400),11.75+MD+.05,.12)
+def beat_section(t0,t1,dense=False,g=1.0):
+    k=0
+    while t0+k*beat/2<t1:
+        tb=t0+k*beat/2
+        if k%2==0: add(kick(),tb,.55*g)
+        add(hat(),tb+beat/4,.12*g,pan=.3)
+        if dense: add(hat(),tb,.07*g,pan=-.3)
+        if k%4==2: add(lpf(rng.standard_normal(int(.18*SR)),3500)*env(.18,.001,.05),tb,.22*g)
+        k+=1
+beat_section(10.0,23.4)
+beat_section(23.4,31.6,dense=True)
+beat_section(38.8,44.0,g=.8)
+# --- SFX ---
+add(bell(1318.5,1.0),0.52,.35,.1); add(bell(1760,1.0),0.66,.30,.1)          # сповіщення
+add(boom(50,1.8),0.72,.5); add(whoosh(.5),0.5,.25)                           # хук під напис
+add(riser(.5),4.1,.3); add(whoosh(.7),4.2,.6,-.2)                            # підняв телефон
+add(lpf(rng.standard_normal(int(.5*SR)),1500)*env(.5,.05,.15),4.55,.25)      # шурхіт
+add(whoosh(.45,bright=5000),5.5,.35,.2); add(click(.02,6000),5.95,.4)        # свайп-розблокування
+add(click(.03,3500),6.42,.6); add(pop(900),6.45,.25)                         # тап по іконці
+add(whoosh(.45,bright=4000),6.6,.45); add(pop(500),6.95,.3)                  # відкрився застосунок
+add(whoosh(.4),7.1,.3)
+add(riser(.6),9.4,.3); add(boom(60,1.0),10.0,.35); add(whoosh(.6),9.5,.35)  # наїзд на дошку
+M0,STEP,MD=10.2,1.65,.36
+CAPS={6,8,9,11}
+for i in range(14):
+    tm=M0+i*STEP
+    if i%2==0: add(click(.025,5000),tm-.4,.35); add(click(.025,5000),tm,.35)
+    add(clack(),tm+MD,.75 if i in CAPS else .6,pan=.1)
+    if i in CAPS: add(lpf(rng.standard_normal(int(.08*SR)),2500)*env(.08,.001,.02),tm+MD+.02,.35)   # взяття
+    add(pop(1100),tm+MD+.12,.08)                                              # репліка в чаті
+# перший зівок (4.К:e5?) — короткий «ой»
+t=tt(.5); fr=420*np.exp(-t*1.2); add(lpf(np.sign(np.sin(2*np.pi*np.cumsum(fr)/SR))*env(.5,.01,.2),1400),M0+6*STEP+MD+.1,.09)
+add(boom(70,.6),M0+6*STEP+MD+.15,.25)
+# другий зівок (5.К:f7??) — сумний спадний синт
+t=tt(.9); fr=330*np.exp(-t*0.9); add(lpf(np.sign(np.sin(2*np.pi*np.cumsum(fr)/SR))*env(.9,.01,.35),1400),M0+8*STEP+MD+.1,.12)
+add(boom(55,.9),M0+8*STEP+MD+.15,.3)
+# шах (6…Ф:e4+)
+add(bell(880,.6),M0+11*STEP+MD+.02,.15)
 # мат
-add(riser(1.2),12.4,.3); add(boom(42,2.4),13.63,.9); add(whoosh(.3,False,6000),13.63,.4)
-add(bell(220,2.0),13.63,.25); add(bell(233,2.0),13.63,.2)
-add(pop(400),13.85,.3)
-for tw in [13.7,14.0,14.3]: add(click(.03,4000),tw,.2)
+MATE=M0+13*STEP+MD
+add(riser(1.4),MATE-1.4,.3); add(boom(42,2.4),MATE,.9); add(whoosh(.3,False,6000),MATE,.4)
+add(bell(220,2.0),MATE,.25); add(bell(233,2.0),MATE,.2)
+add(pop(400),MATE+.3,.3)
+for tw in [MATE+.25,MATE+.55,MATE+.85]: add(click(.03,4000),tw,.2)
+# огляд партії: смужки точності
+add(whoosh(.4,bright=4000),35.2,.3); add(pop(600),35.4,.25)
+t=tt(1.1); add(np.sin(2*np.pi*np.cumsum(300+500*t/1.1)/SR)*env(1.1,.05,.6)*.5,35.8,.06)
+add(bell(1046,.8),37.2,.18)
 # CTA
-add(whoosh(.7),14.85,.55); add(boom(70,.8),15.25,.3)
-add(pop(700),15.3,.25); add(pop(850),15.45,.2)
-add(whoosh(.35,bright=6000),16.15,.35,-.4); add(pop(900),16.45,.3)
-add(whoosh(.35,bright=6000),16.6,.35,.4);  add(pop(1000),16.9,.3)
-add(pop(800),17.55,.25); add(bell(1318.5,1.0),17.9,.15)
+add(whoosh(.7),38.4,.55); add(boom(70,.8),39.0,.3)
+add(pop(700),39.05,.25); add(pop(850),39.2,.2)
+add(whoosh(.35,bright=6000),39.95,.35,-.4); add(pop(900),40.25,.3)
+add(whoosh(.35,bright=6000),40.45,.35,.4);  add(pop(1000),40.75,.3)
+add(pop(800),41.45,.25); add(bell(1318.5,1.0),41.8,.15)
 # мастер: фейд, нормалізація, м'який ліміт
-fade=np.ones(N); fi=int(19.0*SR); fade[fi:]=np.linspace(1,0,N-fi)
+fade=np.ones(N); fi=int(43.8*SR); fade[fi:]=np.linspace(1,0,N-fi)
 L*=fade; R*=fade
 m=max(np.abs(L).max(),np.abs(R).max()); L=np.tanh(L/m*1.3)*.8; R=np.tanh(R/m*1.3)*.8
 st=(np.stack([L,R],1)*32767).astype(np.int16)

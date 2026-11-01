@@ -4,58 +4,29 @@
 <meta charset="utf-8">
 <title>Колишня о 02:14</title>
 <style>
-  :root{
-    --green:#81b64c; --red:#e5483a; --yellow:#f7c631;
-    --app:#302e2b; --app2:#262522; --text:#ffffff;
-    --light:#ebecd0; --dark:#739552;
-  }
+  :root{--green:#81b64c;--red:#e5483a;--app:#302e2b;--light:#ebecd0;--dark:#739552}
   *{box-sizing:border-box;margin:0;padding:0}
-  html,body{width:1080px;height:1920px;overflow:hidden;background:#05060a;font-family:Inter,"Noto Color Emoji",sans-serif}
-  #root{position:absolute;inset:0;overflow:hidden;background:#05060a}
-  /* ---------- room ---------- */
-  #room{position:absolute;inset:-120px;transform-origin:50% 55%}
-  #wall{position:absolute;inset:0;background:
-     radial-gradient(1200px 900px at 50% 40%, #121726 0%, #090b12 55%, #040508 100%)}
-  #window{position:absolute;left:640px;top:180px;width:420px;height:620px;border-radius:6px;
-     background:linear-gradient(180deg,#0f1a33,#0a1122);box-shadow:inset 0 0 0 14px #070910, 0 0 120px rgba(60,90,160,.18);opacity:.55;filter:blur(3px)}
-  #window::before{content:"";position:absolute;left:50%;top:14px;bottom:14px;width:10px;margin-left:-5px;background:#070910}
-  #window::after{content:"";position:absolute;top:50%;left:14px;right:14px;height:10px;margin-top:-5px;background:#070910}
-  #desk{position:absolute;left:-200px;right:-200px;top:1080px;bottom:-200px;
-     background:linear-gradient(180deg,#1b140f 0%,#140e0a 40%,#0b0806 100%);
-     transform:perspective(900px) rotateX(38deg);transform-origin:50% 0}
-  #deskgrain{position:absolute;inset:0;opacity:.22;background:repeating-linear-gradient(92deg,rgba(255,220,180,.06) 0 3px,transparent 3px 19px,rgba(0,0,0,.25) 19px 22px,transparent 22px 41px)}
-  #spill{position:absolute;left:50%;top:1240px;width:1500px;height:1100px;margin-left:-750px;border-radius:50%;
-     background:radial-gradient(closest-side, rgba(150,180,255,.55), rgba(110,140,230,.18) 45%, transparent 75%);mix-blend-mode:screen;opacity:0}
-  #mug{position:absolute;left:150px;top:1200px;width:150px;height:170px;border-radius:12px 12px 30px 30px;
-     background:linear-gradient(90deg,#0d0c0d,#1e1c1e 40%,#0b0a0b);filter:blur(1.5px)}
-  #mug::after{content:"";position:absolute;right:-48px;top:36px;width:62px;height:80px;border:16px solid #141314;border-left:none;border-radius:0 40px 40px 0}
-  /* ---------- phone ---------- */
-  #stage{position:absolute;inset:0;perspective:2200px;perspective-origin:50% 45%}
-  #phoneWrap{position:absolute;left:50%;top:0;width:0;height:0;transform-style:preserve-3d}
-  #phone{position:absolute;left:-290px;top:-600px;width:580px;height:1200px;border-radius:86px;
-     background:linear-gradient(135deg,#3a3a3f,#141416 30%,#0b0b0c 70%,#2b2b30);
-     padding:16px;transform-style:preserve-3d}
-  #phoneShadow{position:absolute;left:-330px;top:-600px;width:660px;height:1240px;border-radius:120px;background:rgba(0,0,0,.75);filter:blur(40px)}
-  #screen{position:absolute;left:16px;top:16px;width:548px;height:1168px;border-radius:72px;overflow:hidden;background:#000}
-  #island{position:absolute;left:50%;top:22px;width:150px;height:44px;margin-left:-75px;border-radius:24px;background:#000;z-index:50}
-  #glare{position:absolute;inset:0;border-radius:72px;background:linear-gradient(120deg,rgba(255,255,255,.10),transparent 35%,transparent 70%,rgba(255,255,255,.04));z-index:60;pointer-events:none}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#000;font-family:Inter,"Noto Color Emoji",sans-serif}
+  #root{position:absolute;inset:0;overflow:hidden;background:#000}
+  #cam{position:absolute;left:0;top:0;width:1080px;height:1920px;transform-origin:0 0;z-index:3}
+  .shot{position:absolute;inset:0}
+  .shot img{position:absolute;left:0;top:0;width:1080px;height:1920px;z-index:5}
+  .glow{position:absolute;inset:0;z-index:6;mix-blend-mode:screen;pointer-events:none}
+  #screen{position:absolute;left:0;top:0;width:548px;height:1168px;overflow:hidden;background:#000;transform-origin:0 0;z-index:2}
   #screenOff{position:absolute;inset:0;background:#000;z-index:55}
-  .status{position:absolute;left:0;right:0;top:0;height:80px;display:flex;justify-content:space-between;align-items:center;padding:16px 56px 0 64px;color:#fff;font-weight:600;font-size:26px;z-index:40}
+  .status{position:absolute;left:0;right:0;top:0;height:80px;display:flex;justify-content:space-between;align-items:center;padding:16px 50px 0 70px;color:#fff;font-weight:600;font-size:26px;z-index:40}
   .status .r{display:flex;gap:10px;align-items:center}
   .bat{width:44px;height:22px;border:2px solid rgba(255,255,255,.7);border-radius:6px;position:relative}
   .bat::after{content:"";position:absolute;left:2px;top:2px;bottom:2px;width:9px;background:#e5483a;border-radius:2px}
-  /* lock */
   #lock{position:absolute;inset:0;background:radial-gradient(500px 600px at 30% 20%,#3b2a6b,#160f2c 60%,#07060f);z-index:20}
   #lockTime{position:absolute;top:150px;width:100%;text-align:center;color:#fff;font-size:170px;font-weight:600;letter-spacing:-4px}
   #lockDate{position:absolute;top:120px;width:100%;text-align:center;color:rgba(255,255,255,.8);font-size:30px;font-weight:600}
-  #notif{position:absolute;left:24px;right:24px;top:480px;border-radius:36px;padding:24px 26px;background:rgba(40,40,52,.72);
-     box-shadow:0 10px 40px rgba(0,0,0,.4);color:#fff;display:flex;gap:20px}
+  #notif{position:absolute;left:24px;right:24px;top:480px;border-radius:36px;padding:24px 26px;background:rgba(40,40,52,.78);box-shadow:0 10px 40px rgba(0,0,0,.4);color:#fff;display:flex;gap:20px}
   #notif .ic{width:72px;height:72px;border-radius:18px;background:linear-gradient(#5fd068,#2fae46);flex:none;display:flex;align-items:center;justify-content:center;font-size:40px}
   #notif .h{display:flex;justify-content:space-between;font-size:28px;font-weight:700}
   #notif .h span{font-weight:500;color:rgba(255,255,255,.55);font-size:24px}
   #notif .b{font-size:32px;margin-top:6px}
   #lockHint{position:absolute;bottom:22px;left:50%;width:180px;height:8px;margin-left:-90px;border-radius:5px;background:rgba(255,255,255,.85)}
-  /* home */
   #home{position:absolute;inset:0;background:radial-gradient(500px 700px at 70% 30%,#264060,#0d1626 65%,#060a12);z-index:10}
   #grid{position:absolute;left:38px;right:38px;top:130px;display:grid;grid-template-columns:repeat(4,1fr);row-gap:36px}
   .app{display:flex;flex-direction:column;align-items:center;gap:10px;color:#fff;font-size:21px;font-weight:500}
@@ -64,9 +35,8 @@
   #chessIcon .t{background:linear-gradient(#8bc157,#5d8f33);font-family:"DejaVu Sans";color:#fff;font-size:70px;text-shadow:0 3px 0 rgba(0,0,0,.25)}
   #dock{position:absolute;left:24px;right:24px;bottom:28px;height:150px;border-radius:44px;background:rgba(255,255,255,.14);display:flex;justify-content:space-around;align-items:center}
   #dock .t{width:104px;height:104px;border-radius:26px}
-  #ripple{position:absolute;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.55);z-index:45;margin:-60px 0 0 -60px;pointer-events:none}
-  /* chess app */
-  #app{position:absolute;inset:0;background:var(--app);z-index:30;color:#fff;transform-origin:50% 50%}
+  .touch{position:absolute;width:110px;height:110px;border-radius:50%;margin:-55px 0 0 -55px;background:rgba(255,255,255,.35);border:3px solid rgba(255,255,255,.85);z-index:52;pointer-events:none;opacity:0}
+  #app{position:absolute;inset:0;background:var(--app);z-index:30;color:#fff}
   #appHead{position:absolute;top:80px;left:0;right:0;height:84px;display:flex;align-items:center;padding:0 30px;gap:18px;font-size:30px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.06)}
   #appHead .logo{display:flex;align-items:center;gap:8px}
   #appHead .logo b{font-family:"DejaVu Sans";color:var(--green);font-size:38px}
@@ -78,134 +48,113 @@
   .pname small{display:block;font-weight:500;color:#9e9b97;font-size:22px}
   .clock{margin-left:auto;font-family:"DejaVu Sans Mono",monospace;font-size:36px;font-weight:700;padding:8px 18px;border-radius:8px;background:#262421;color:#8b8987}
   .clock.on{background:#fff;color:#111}
-  #pTop{top:178px}
-  #pBot{top:784px}
-  #board{position:absolute;left:14px;top:268px;width:520px;height:520px;}
+  #pTop{top:178px} #pBot{top:784px}
+  #board{position:absolute;left:14px;top:268px;width:520px;height:520px}
   #squares{position:absolute;inset:0;display:grid;grid-template-columns:repeat(8,1fr);grid-template-rows:repeat(8,1fr)}
   .sq{position:relative;font-size:16px;font-weight:700}
-  .sq .cr{position:absolute;right:3px;bottom:1px}
-  .sq .cf{position:absolute;left:3px;top:1px}
-  .hl{position:absolute;width:65px;height:65px;background:rgba(255,255,51,.5);pointer-events:none}
-  .piece{position:absolute;width:65px;height:65px;display:flex;align-items:center;justify-content:center;font-family:"DejaVu Sans";font-size:56px;line-height:1;will-change:transform}
+  .sq .cr{position:absolute;left:3px;top:1px}
+  .sq .cf{position:absolute;right:4px;bottom:1px}
+  .hl{position:absolute;width:65px;height:65px;background:rgba(255,255,51,.5)}
+  .piece{position:absolute;width:65px;height:65px;display:flex;align-items:center;justify-content:center;font-family:"DejaVu Sans";font-size:56px;line-height:1}
   .piece.w{color:#fafafa;-webkit-text-stroke:1.6px #333;text-shadow:0 2px 2px rgba(0,0,0,.35)}
   .piece.b{color:#363431;-webkit-text-stroke:1px #111;text-shadow:0 2px 2px rgba(0,0,0,.35)}
   .cls{position:absolute;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;box-shadow:0 2px 4px rgba(0,0,0,.5);border:2px solid #fff;z-index:20}
-  #kingRed{position:absolute;width:65px;height:65px;background:radial-gradient(circle, rgba(255,40,40,.95) 0%, rgba(230,30,30,.6) 45%, transparent 75%)}
-  #moves{position:absolute;left:0;right:0;top:874px;height:56px;background:#262421;display:flex;align-items:center;gap:22px;padding:0 26px;font-size:24px;font-weight:600;color:#c9c6c2;white-space:nowrap;overflow:hidden}
-  #moves .mv{opacity:0}
-  #moves .cur{background:#4a4845;border-radius:6px;padding:2px 8px;color:#fff}
+  #kingRed{position:absolute;width:65px;height:65px;background:radial-gradient(circle,rgba(255,40,40,.95) 0%,rgba(230,30,30,.6) 45%,transparent 75%)}
+  #moves{position:absolute;left:0;right:0;top:874px;height:56px;background:#262421;overflow:hidden}
+  #mvStrip{position:absolute;left:0;top:0;height:56px;display:flex;align-items:center;gap:18px;padding:0 26px;font-size:24px;font-weight:600;color:#c9c6c2;white-space:nowrap}
+  #mvStrip .mv{opacity:0}
+  #mvStrip .num{color:#8b8987}
+  #mvStrip .cur{background:#4a4845;border-radius:6px;padding:2px 8px;color:#fff}
   #review{position:absolute;left:18px;right:18px;top:944px;height:200px}
   .line{position:absolute;left:0;right:0;display:flex;align-items:center;gap:12px;font-size:23px;line-height:1.2;background:#3c3a37;border-radius:14px;padding:10px 14px}
-  .line .n{font-weight:800;min-width:76px;color:#fff}
+  .line .n{font-weight:800;min-width:84px;color:#fff}
   .line .q{flex:1;color:#e8e6e3}
   .line .who{color:#9e9b97;font-weight:600}
-  .line .c{width:34px;height:34px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px}
-  #mateCard{position:absolute;left:30px;right:30px;top:940px;height:200px;border-radius:22px;background:#262421;box-shadow:0 20px 50px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:30}
+  .line .c{width:34px;height:34px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;color:#fff}
+  #mateCard,#revCard{position:absolute;left:24px;right:24px;top:938px;height:206px;border-radius:22px;background:#262421;box-shadow:0 20px 50px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;z-index:30;opacity:0}
   #mateCard .t1{font-size:40px;font-weight:900}
   #mateCard .t2{font-size:25px;color:#bdbab5;font-weight:600}
   #mateCard .elo{font-size:24px;font-weight:800;color:var(--red)}
-  #tap{position:absolute;width:86px;height:86px;border-radius:50%;margin:-43px 0 0 -43px;background:rgba(255,255,255,.35);border:3px solid rgba(255,255,255,.8);z-index:25}
-  /* ---------- hands ---------- */
-  .hand{position:absolute;transform-style:preserve-3d}
-  .skin{background:linear-gradient(90deg,#3a2419,#7a4f37 45%,#5a3826 75%,#2a1810);box-shadow:inset 0 6px 14px rgba(255,210,170,.12)}
-  #palm{position:absolute;left:-360px;top:250px;width:720px;height:700px;border-radius:300px 300px 120px 120px;
-     background:radial-gradient(400px 300px at 50% 0%,#6b4430,#3d271b 55%,#1d120c);transform:translateZ(-6px)}
-  .finger{position:absolute;width:86px;border-radius:44px}
-  #thumb{position:absolute;left:-360px;top:110px;width:110px;height:320px;border-radius:55px;transform:rotate(18deg);
-     background:linear-gradient(90deg,#2a1810,#6b4430 50%,#8a5b40 70%,#4a2e20)}
-  #thumbTip{position:absolute;width:118px;height:420px;border-radius:60px 60px 50px 50px;margin-left:-59px;transform-origin:50% 30px;
-     background:linear-gradient(90deg,#2e1b12 0%,#7a4f37 35%,#9a6a4c 55%,#6b4430 80%,#2e1b12 100%);box-shadow:0 30px 40px rgba(0,0,0,.55),inset 0 -40px 60px rgba(0,0,0,.4);z-index:70}
-  #thumbTip::before{content:"";position:absolute;left:24px;right:24px;top:10px;height:78px;border-radius:40px 40px 22px 22px;background:linear-gradient(180deg,rgba(255,225,205,.55),rgba(220,170,140,.25));box-shadow:inset 0 -3px 0 rgba(255,255,255,.15)}
-  .shadeTop{position:absolute;left:0;right:0;top:0;height:760px;background:linear-gradient(180deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.7) 55%,rgba(0,0,0,0) 100%);opacity:0}
-  /* ---------- overlay text ---------- */
-  #ui{position:absolute;inset:0;pointer-events:none}
-  .cap{position:absolute;left:70px;right:70px;text-align:center;color:#fff;font-weight:900;letter-spacing:-1px;line-height:1.05;text-transform:uppercase;
-     text-shadow:0 6px 30px rgba(0,0,0,.85),0 2px 0 rgba(0,0,0,.6)}
-  .cap .w{display:inline-block;will-change:transform}
-  .acc{color:var(--green)}
-  .accR{color:#ff5a48}
-  #cap1{top:250px;font-size:96px}
-  #cap2{top:250px;font-size:80px}
-  #cap3{top:220px;font-size:76px}
-  #ctaShade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.92) 0%,rgba(0,0,0,.8) 40%,rgba(0,0,0,.15) 58%,rgba(0,0,0,0) 80%,rgba(0,0,0,.5) 100%)}
-  #ctaQ{top:190px;font-size:100px}
-  .opt{position:absolute;left:110px;right:110px;height:132px;border-radius:30px;display:flex;align-items:center;gap:30px;padding:0 34px;
-     background:rgba(20,20,22,.88);border:3px solid rgba(255,255,255,.14);color:#fff;font-size:52px;font-weight:900;text-transform:uppercase;letter-spacing:-.5px;box-shadow:0 20px 50px rgba(0,0,0,.6)}
-  .opt .num{width:84px;height:84px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:56px;flex:none}
-  #opt1{top:440px}
-  #opt2{top:590px}
-  #opt1 .num{background:var(--green)}
-  #opt2 .num{background:#4a6fd8}
-  #ctaW{top:760px;font-size:62px}
-  #vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 45%,transparent 50%,rgba(0,0,0,.65) 100%);pointer-events:none}
-  #flash{position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(255,40,30,0) 30%,rgba(200,10,10,.55) 100%);opacity:0;pointer-events:none}
-  #grain{position:absolute;inset:0;opacity:.07;mix-blend-mode:overlay;pointer-events:none}
+  #revCard{justify-content:flex-start;padding:18px 24px;gap:12px;align-items:stretch}
+  #revCard .h{font-size:26px;font-weight:800;display:flex;justify-content:space-between}
+  #revCard .h span{color:var(--green)}
+  .acc{display:flex;align-items:center;gap:14px;font-size:24px;font-weight:700}
+  .acc .lbl{width:70px}
+  .acc .bar{flex:1;height:22px;border-radius:11px;background:#3c3a37;overflow:hidden}
+  .acc .bar i{display:block;height:100%;border-radius:11px}
+  .acc b{width:74px;text-align:right}
+  #revCard .best{font-size:23px;color:#e8e6e3;font-weight:600}
+  #revCard .best em{font-style:normal;color:var(--green);font-weight:800}
+  #ui{position:absolute;inset:0;pointer-events:none;z-index:20}
+  .shade{position:absolute;left:0;right:0;opacity:0}
+  #shTop{top:0;height:720px;background:linear-gradient(180deg,rgba(0,0,0,.9),rgba(0,0,0,.65) 55%,rgba(0,0,0,0))}
+  #shBot{bottom:0;height:900px;background:linear-gradient(0deg,rgba(0,0,0,.92),rgba(0,0,0,.7) 55%,rgba(0,0,0,0))}
+  .cap{position:absolute;left:70px;right:70px;text-align:center;color:#fff;font-weight:900;letter-spacing:-1px;line-height:1.05;text-transform:uppercase;text-shadow:0 6px 30px rgba(0,0,0,.85),0 2px 0 rgba(0,0,0,.6);display:none}
+  .cap .w{display:inline-block;margin:0 .06em}
+  .g{color:var(--green)} .r{color:#ff5a48}
+  #cap1{top:240px;font-size:98px}
+  #cap2{top:200px;font-size:80px}
+  #capA{top:220px;font-size:92px}
+  #capB{top:220px;font-size:84px}
+  #cap3{top:210px;font-size:78px}
+  #ctaQ{top:170px;font-size:96px}
+  .opt{position:absolute;left:100px;right:100px;height:124px;border-radius:30px;display:flex;align-items:center;gap:28px;padding:0 30px;background:rgba(20,20,22,.92);border:3px solid rgba(255,255,255,.16);color:#fff;font-size:50px;font-weight:900;text-transform:uppercase;letter-spacing:-.5px;box-shadow:0 20px 50px rgba(0,0,0,.6);opacity:0}
+  .opt .num{width:80px;height:80px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-size:54px;flex:none}
+  #opt1{top:1150px} #opt2{top:1300px}
+  #opt1 .num{background:var(--green)} #opt2 .num{background:#4a6fd8}
+  #ctaW{top:1460px;font-size:60px}
+  #vig{position:absolute;inset:0;z-index:12;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(0,0,0,.6) 100%);pointer-events:none}
+  #flash{position:absolute;inset:0;z-index:13;background:radial-gradient(circle at 50% 50%,rgba(255,40,30,0) 30%,rgba(200,10,10,.55) 100%);opacity:0;pointer-events:none}
+  #grain{position:absolute;inset:0;z-index:30;width:1080px;height:1920px;opacity:.08;mix-blend-mode:overlay;pointer-events:none}
 </style>
 </head>
 <body>
 <div id="root">
-  <div id="room">
-    <div id="wall"></div><div id="window"></div>
-    <div id="desk"><div id="deskgrain"></div></div>
-    <div id="mug"></div>
-    <div id="spill"></div>
+  <div id="cam">
+    <div class="shot" id="shotDesk"><img src="assets/desk.png"><div class="glow" id="glowDesk"></div></div>
+    <div class="shot" id="shotHand"><img src="assets/hand.png"><div class="glow" id="glowHand"></div></div>
   </div>
 
-  <div id="stage">
-    <div id="phoneWrap">
-      <div id="phoneShadow"></div>
-      <div class="hand" id="handBack"><div id="palm"></div></div>
-      <div id="phone">
-        <div id="screen">
-          <div class="status"><span id="stTime">02:14</span><span class="r">📶 <span class="bat"></span></span></div>
-          <!-- home -->
-          <div id="home">
-            <div id="grid"></div>
-            <div id="dock"><div class="t" style="background:linear-gradient(#5fd068,#2fae46)"></div><div class="t" style="background:linear-gradient(#5aa9ff,#1f6fe0)"></div><div class="t" style="background:linear-gradient(#f2f2f2,#cfcfcf)"></div><div class="t" style="background:linear-gradient(#ff7a59,#e2442a)"></div></div>
-          </div>
-          <!-- lock -->
-          <div id="lock">
-            <div id="lockDate">неділя, 1 листопада</div>
-            <div id="lockTime">02:14</div>
-            <div id="notif"><div class="ic">💬</div><div style="flex:1"><div class="h">Колишня <span>щойно</span></div><div class="b">Не спиш?</div></div></div>
-            <div id="lockHint"></div>
-          </div>
-          <!-- chess app -->
-          <div id="app">
-            <div id="appHead"><span style="font-size:34px">‹</span><span class="logo"><b>♟</b>Chess.com</span><span class="sp"></span><span class="tag">Бліц · 3 хв</span></div>
-            <div class="pbar" id="pTop"><div class="ava" style="background:#5b2a3a">💔</div><div class="pname">Колишня <small>(2400) · онлайн о 02:14</small></div><div class="clock" id="clkB">2:47</div></div>
-            <div id="board">
-              <div id="squares"></div>
-              <div id="hls"></div>
-              <div id="kingRed"></div>
-              <div id="pieces"></div>
-              <div id="clsWrap"></div>
-            </div>
-            <div class="pbar" id="pBot"><div class="ava" style="background:#3d5a80">😴</div><div class="pname">Ти <small>(612) · мав спати</small></div><div class="clock on" id="clkW">2:59</div></div>
-            <div id="moves"></div>
-            <div id="review"></div>
-            <div id="mateCard"><div class="t1">Колишня перемогла</div><div class="t2">матом · 2 ходи · 02:15</div><div class="elo">Рейтинг самоповаги −48</div></div>
-            <div id="tap"></div>
-          </div>
-          <div id="ripple"></div>
-          <div id="screenOff"></div>
-          <div id="island"></div>
-          <div id="glare"></div>
-        </div>
-      </div>
-      <div id="thumbTip"></div>
+  <div id="screen">
+    <div class="status"><span>02:14</span><span class="r">📶 <span class="bat"></span></span></div>
+    <div id="home">
+      <div id="grid"></div>
+      <div id="dock"><div class="t" style="background:linear-gradient(#5fd068,#2fae46)"></div><div class="t" style="background:linear-gradient(#5aa9ff,#1f6fe0)"></div><div class="t" style="background:linear-gradient(#f2f2f2,#cfcfcf)"></div><div class="t" style="background:linear-gradient(#ff7a59,#e2442a)"></div></div>
     </div>
+    <div id="lock">
+      <div id="lockDate">неділя, 1 листопада</div>
+      <div id="lockTime">02:14</div>
+      <div id="notif"><div class="ic">💬</div><div style="flex:1"><div class="h">Колишня <span>щойно</span></div><div class="b">Не спиш?</div></div></div>
+      <div id="lockHint"></div>
+    </div>
+    <div id="app">
+      <div id="appHead"><span style="font-size:34px">‹</span><span class="logo"><b>♟</b>Chess.com</span><span class="sp"></span><span class="tag">Бліц · 3 хв</span></div>
+      <div class="pbar" id="pTop"><div class="ava" style="background:#5b2a3a">💔</div><div class="pname">Колишня <small>(2400) · онлайн о 02:14</small></div><div class="clock" id="clkB">3:00</div></div>
+      <div id="board"><div id="squares"></div><div class="hl" id="hlA"></div><div class="hl" id="hlB"></div><div id="kingRed"></div><div id="pieces"></div><div id="clsWrap"></div></div>
+      <div class="pbar" id="pBot"><div class="ava" style="background:#3d5a80">😴</div><div class="pname">Ти <small>(612) · мав спати</small></div><div class="clock on" id="clkW">3:00</div></div>
+      <div id="moves"><div id="mvStrip"></div></div>
+      <div id="review"></div>
+      <div id="mateCard"><div class="t1">Колишня перемогла</div><div class="t2">матом · 7 ходів · 02:21</div><div class="elo">Рейтинг самоповаги −48</div></div>
+      <div id="revCard">
+        <div class="h">Огляд партії <span>Коуч ♟</span></div>
+        <div class="acc"><span class="lbl">Ти</span><div class="bar"><i id="accW" style="background:#e5483a"></i></div><b id="accWn">0%</b></div>
+        <div class="acc"><span class="lbl">Вона</span><div class="bar"><i id="accB" style="background:#81b64c"></i></div><b id="accBn">0%</b></div>
+        <div class="best">Найкращий хід був: <em>не відповідати і спати</em></div>
+      </div>
+    </div>
+    <div class="touch" id="touch1"></div><div class="touch" id="touch2"></div>
+    <div id="screenOff"></div>
   </div>
 
   <div id="flash"></div>
   <div id="vig"></div>
-
   <div id="ui">
-    <div class="shadeTop" id="shTop"></div>
+    <div class="shade" id="shTop"></div><div class="shade" id="shBot"></div>
     <div class="cap" id="cap1"></div>
     <div class="cap" id="cap2"></div>
+    <div class="cap" id="capA"></div>
+    <div class="cap" id="capB"></div>
     <div class="cap" id="cap3"></div>
-    <div id="ctaShade"></div>
     <div class="cap" id="ctaQ"></div>
     <div class="opt" id="opt1"><div class="num">1</div>Відповів би</div>
     <div class="opt" id="opt2"><div class="num">2</div>Продовжив би спати</div>
@@ -215,6 +164,7 @@
 </div>
 
 <script>
+const DURATION=45;
 const $=id=>document.getElementById(id);
 const clamp=(x,a=0,b=1)=>Math.min(b,Math.max(a,x));
 const lerp=(a,b,t)=>a+(b-a)*t;
@@ -223,229 +173,208 @@ const eIO=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
 const eOut=x=>1-Math.pow(1-x,3);
 const eIn=x=>x*x*x;
 const eBack=x=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(x-1,3)+c1*Math.pow(x-1,2)};
-// damped spring kick: 0 at start, rings out
-const kick=(t,t0,dur=.45,f=2.2)=>{const x=t-t0;if(x<0||x>dur*2)return 0;return Math.exp(-x*7/dur)*Math.sin(x*Math.PI*2*f/dur*0.5)};
-// keyframe interpolation with easing
-function kf(t,keys,ease=eIO){ // keys: [[time,value],...]
-  if(t<=keys[0][0])return keys[0][1];
+const kick=(t,t0,dur=.45)=>{const x=t-t0;if(x<0||x>dur*2)return 0;return Math.exp(-x*7/dur)*Math.sin(x*Math.PI*2.2/dur)};
+function kf(t,keys,ease=eIO){if(t<=keys[0][0])return keys[0][1];
   for(let i=0;i<keys.length-1;i++){const [t0,v0]=keys[i],[t1,v1]=keys[i+1];
     if(t<=t1){const x=ease((t-t0)/(t1-t0));return Array.isArray(v0)?v0.map((v,j)=>lerp(v,v1[j],x)):lerp(v0,v1,x)}}
-  return keys[keys.length-1][1];
-}
+  return keys[keys.length-1][1];}
 
-/* ---------- build static stuff ---------- */
+/* геометрія зеленого екрана на фото (assets/quads.json, prep_assets.py) */
+const QUADS={
+ hand:{tl:[324.3,439.8],tr:[777.7,437.8],br:[780.6,1397.7],bl:[338.1,1400.0]},
+ desk:{tl:[423.0,897.1],tr:[639.8,891.3],br:[675.2,1336.3],bl:[404.5,1339.5]}};
+const SW=548,SH=1168;
+function solve(A,b){const n=b.length;for(let i=0;i<n;i++){let m=i;for(let k=i+1;k<n;k++)if(Math.abs(A[k][i])>Math.abs(A[m][i]))m=k;
+  [A[i],A[m]]=[A[m],A[i]];[b[i],b[m]]=[b[m],b[i]];for(let k=i+1;k<n;k++){const f=A[k][i]/A[i][i];for(let j=i;j<n;j++)A[k][j]-=f*A[i][j];b[k]-=f*b[i];}}
+  const x=Array(n).fill(0);for(let i=n-1;i>=0;i--){let s=b[i];for(let j=i+1;j<n;j++)s-=A[i][j]*x[j];x[i]=s/A[i][i];}return x;}
+function homog(dst){
+  const c=[(dst.tl[0]+dst.br[0])/2,(dst.tl[1]+dst.br[1])/2];
+  const ex=q=>[q[0]+Math.sign(q[0]-c[0])*3,q[1]+Math.sign(q[1]-c[1])*3];
+  const src=[[0,0],[SW,0],[SW,SH],[0,SH]],d=[ex(dst.tl),ex(dst.tr),ex(dst.br),ex(dst.bl)];
+  const A=[],b=[];for(let i=0;i<4;i++){const [x,y]=src[i],[u,v]=d[i];
+    A.push([x,y,1,0,0,0,-u*x,-u*y]);b.push(u);A.push([0,0,0,x,y,1,-v*x,-v*y]);b.push(v);}
+  const h=solve(A,b);h.push(1);return h;}
+const H={hand:homog(QUADS.hand),desk:homog(QUADS.desk)};
+const mapPt=(h,x,y)=>{const w=h[6]*x+h[7]*y+h[8];return [(h[0]*x+h[1]*y+h[2])/w,(h[3]*x+h[4]*y+h[5])/w]};
+const m3d=h=>`matrix3d(${h[0]},${h[3]},0,${h[6]},${h[1]},${h[4]},0,${h[7]},0,0,1,0,${h[2]},${h[5]},0,${h[8]})`;
+
 const apps=[["Фото","🌄","linear-gradient(#fff,#e6e6e6)"],["Камера","📷","linear-gradient(#9a9a9a,#5a5a5a)"],["Погода","🌙","linear-gradient(#3a6fd8,#1c3f8f)"],["Годинник","⏰","linear-gradient(#222,#000)"],
  ["Нотатки","📝","linear-gradient(#ffe58a,#f5c842)"],["Музика","🎧","linear-gradient(#ff5f7e,#e0294d)"],["Карти","🗺️","linear-gradient(#9be39b,#5cb85c)"],["Налашт.","⚙️","linear-gradient(#a0a0a8,#6b6b73)"],
  ["Повідомл.","💬","linear-gradient(#5fd068,#2fae46)",1],["Пошта","✉️","linear-gradient(#5aa9ff,#1f6fe0)"],["Chess.com","♟","",0,"chessIcon"],["Книги","📚","linear-gradient(#ffad4a,#f07f12)"],
  ["Калькул.","🧮","linear-gradient(#333,#111)"],["Здоров'я","❤️","linear-gradient(#fff,#eee)"],["Файли","📁","linear-gradient(#5aa9ff,#2e7de0)"],["Сон","🛌","linear-gradient(#5b4fd8,#2d2690)"]];
 $("grid").innerHTML=apps.map(a=>`<div class="app" ${a[4]?`id="${a[4]}"`:""}><div class="t" style="background:${a[2]}">${a[1]}${a[3]?'<div class="badge">1</div>':''}</div>${a[0]}</div>`).join("");
 
-const SQ=65;
-let sqHTML="";
-for(let r=8;r>=1;r--)for(let f=0;f<8;f++){
-  const light=(f+r)%2===1; const col=light?"var(--light)":"var(--dark)", tc=light?"var(--dark)":"var(--light)";
-  sqHTML+=`<div class="sq" style="background:${col};color:${tc}">${f===7?`<span class="cr">${r}</span>`:""}${f===0?`<span class="cf">${""}</span>`:""}${r===1?`<span class="cf" style="top:auto;bottom:1px;left:auto;right:${f===7?18:3}px">${"abcdefgh"[f]}</span>`:""}</div>`;
-}
+const SQ=65;let sqHTML="";
+for(let r=8;r>=1;r--)for(let f=0;f<8;f++){const light=(f+r)%2===1;const col=light?"var(--light)":"var(--dark)",tc=light?"var(--dark)":"var(--light)";
+  sqHTML+=`<div class="sq" style="background:${col};color:${tc}">${f===0?`<span class="cr">${r}</span>`:""}${r===1?`<span class="cf">${"abcdefgh"[f]}</span>`:""}</div>`;}
 $("squares").innerHTML=sqHTML;
-
 const G={K:"♚",Q:"♛",R:"♜",B:"♝",N:"♞",P:"♟"};
 const start=[];
 "RNBQKBNR".split("").forEach((k,i)=>{start.push({id:"w"+k+i,c:"w",k,f:i,r:1});start.push({id:"b"+k+i,c:"b",k,f:i,r:8});});
 for(let i=0;i<8;i++){start.push({id:"wP"+i,c:"w",k:"P",f:i,r:2});start.push({id:"bP"+i,c:"b",k:"P",f:i,r:7});}
 $("pieces").innerHTML=start.map(s=>`<div class="piece ${s.c}" id="${s.id}">${G[s.k]}</div>`).join("");
+const sq=s=>["abcdefgh".indexOf(s[0]),+s[1]];
 const sqXY=(f,r)=>[f*SQ,(8-r)*SQ];
 
-// moves: time, piece id, from, to, classification
+/* Партія — пастка Блекберна–Шилінга: 4.К:e5? і 5.К:f7?? — два зівки, 7…Кf3# */
+const M0=10.2, STEP=1.65, MD=.36;
 const MOVES=[
- {t:8.55, id:"wP5", from:[5,2], to:[5,3], san:"1. f3", cls:"?!", clsC:"#f7c631", who:"Ти", q:"«Ні. А що?»"},
- {t:10.15,id:"bP4", from:[4,7], to:[4,5], san:"1… e5", cls:"", who:"Вона", q:"«Просто згадала нас…»"},
- {t:11.75,id:"wP6", from:[6,2], to:[6,4], san:"2. g4", cls:"??", clsC:"#ca3431", who:"Ти", q:"«Я теж сумую 🥺»"},
- {t:13.25,id:"bQ3", from:[3,8], to:[7,4], san:"2… Фh4#", cls:"#", clsC:"#ca3431", who:"Вона", q:"«Ой. Це було не тобі 💀»"},
-];
-const MD=.38; // move duration
-$("moves").innerHTML=MOVES.map((m,i)=>`<span class="mv" id="mv${i}">${m.san}${m.cls&&m.cls!=="#"?`<span style="color:${m.clsC}">${m.cls}</span>`:""}</span>`).join("");
-$("review").innerHTML=MOVES.map((m,i)=>`<div class="line" id="ln${i}"><span class="n">${m.san.replace(/^\d+\.\s?/,"").replace("…","")}</span><span class="q"><span class="who">${m.who}:</span> ${m.q}</span>${m.cls?`<span class="c" style="background:${m.clsC}">${m.cls}</span>`:""}</div>`).join("");
+ ["wP4","e2","e4","e4","","Ти","«Не сплю. А що?»"],
+ ["bP4","e7","e5","e5","","Вона","«Та нічого… просто згадала»"],
+ ["wN6","g1","f3","Кf3","","Ти","«Що саме згадала?»"],
+ ["bN1","b8","c6","Кc6","","Вона","«Як ми гуляли біля моря»"],
+ ["wB5","f1","c4","Сc4","","Ти","«Було круто, так»"],
+ ["bN1","c6","d4","Кd4","","Вона","«Ти взагалі змінився?»"],
+ ["wN6","f3","e5","К:e5","?","Ти","«Так, я тепер інший 😎»","bP4"],
+ ["bQ3","d8","g5","Фg5","","Вона","«Я теж часто тебе згадую»"],
+ ["wN6","e5","f7","К:f7","??","Ти","«Може, побачимось завтра? 🥺»","bP5"],
+ ["bQ3","g5","g2","Ф:g2","","Вона","«Ахах, побачимо 🙂»","wP6"],
+ ["wR7","h1","f1","Лf1","","Ти","«То о котрій?»"],
+ ["bQ3","g2","e4","Ф:e4+","","Вона","«Слухай…»","wP4"],
+ ["wB5","c4","e2","Сe2","","Ти","«Що?»"],
+ ["bN1","d4","f3","Кf3#","#","Вона","«Сорі, це було не тобі»"],
+].map((m,i)=>({t:M0+i*STEP,id:m[0],from:sq(m[1]),to:sq(m[2]),san:m[3],cls:m[4],who:m[5],q:m[6],cap:m[7],
+  clsC:{"?":"#e6912c","??":"#ca3431","#":"#ca3431"}[m[4]]}));
+const MATE=MOVES[13].t+MD;
+$("mvStrip").innerHTML=MOVES.map((m,i)=>`${i%2===0?`<span class="num mv" id="nm${i}">${i/2+1}.</span>`:""}<span class="mv" id="mv${i}">${m.san}${m.cls&&m.cls!=="#"?`<span style="color:${m.clsC}">${m.cls}</span>`:""}</span>`).join("");
+$("review").innerHTML=MOVES.map((m,i)=>`<div class="line" id="ln${i}"><span class="n">${m.san}</span><span class="q"><span class="who">${m.who}:</span> ${m.q}</span>${m.cls?`<span class="c" style="background:${m.clsC}">${m.cls}</span>`:""}</div>`).join("");
 $("clsWrap").innerHTML=MOVES.map((m,i)=>m.cls?`<div class="cls" id="cls${i}" style="background:${m.clsC}">${m.cls}</div>`:"").join("");
-$("hls").innerHTML=`<div class="hl" id="hlA"></div><div class="hl" id="hlB"></div>`;
 
 function splitWords(el,html){el.innerHTML=html.split(/(<br>)/).map(s=>s==="<br>"?s:s.split(" ").filter(Boolean).map(w=>`<span class="w">${w}</span>`).join(" ")).join("");return [...el.querySelectorAll(".w")];}
-const W1=splitWords($("cap1"),'Коли колишня<br>пише о <span class="acc">02:14</span> 💀'.replace('<span class="acc">02:14</span>','§'));
-// re-insert accent
-W1.forEach(w=>{if(w.textContent==="§"){w.innerHTML='02:14';w.classList.add("acc")}});
-const W2=splitWords($("cap2"),'Розбираємо переписку<br>як <b>§</b> партію');
-W2.forEach(w=>{if(w.textContent.includes("§")){w.innerHTML='шахову';w.classList.add("acc")}});
-const W3=splitWords($("cap3"),'Два зівки.<br>Один мат.<br>І знову ти §');
-W3.forEach(w=>{if(w.textContent.includes("§")){w.innerHTML='програв';w.classList.add("accR")}});
-const WQ=splitWords($("ctaQ"),'А ти що<br>зробив би?');
-const WW=splitWords($("ctaW"),'Пиши цифру<br>в коментарях ♟️');
-
-function wordsIn(ws,t,t0,step=.09,dur=.4,out=null){
+function caption(id,text,accent,cls){const ws=splitWords($(id),text);ws.forEach(w=>{if(w.textContent.includes("§")){w.innerHTML=w.textContent.replace("§",accent);w.classList.add(cls)}});return ws;}
+const W1=caption("cap1",'Коли колишня<br>пише о §',"02:14","g");
+const W2=caption("cap2",'Розбираємо переписку<br>як § партію',"шахову","g");
+const WA=caption("capA",'Перший<br>§',"зівок","r");
+const WB=caption("capB",'Другий зівок.<br>Він ще §',"вірить","r");
+const W3=caption("cap3",'Два зівки.<br>Один мат.<br>І знову ти §',"програв","r");
+const WQ=caption("ctaQ",'А ти що<br>зробив би?',"","");
+const WW=caption("ctaW",'Пиши цифру<br>в коментарях ♟️',"","");
+function wordsIn(id,ws,t,t0,out,step=.1,dur=.42){
+  const el=$(id);el.style.display=(t>=t0-.05&&(out==null||t<out+.35))?"block":"none";
   ws.forEach((w,i)=>{const x=p(t,t0+i*step,t0+i*step+dur);const e=eBack(x);
-    let o=clamp(x*2.2), y=(1-e)*70, s=.6+.4*e, r=(1-e)*(i%2?6:-6);
-    if(out){const xo=p(t,out,out+.3);o*=1-xo;y-=eIn(xo)*60;s*=1-xo*.15}
-    w.style.opacity=o;w.style.transform=`translateY(${y}px) scale(${s}) rotate(${r}deg)`;});
-}
+    let o=clamp(x*2.2),y=(1-e)*70,s=.6+.4*e,r=(1-e)*(i%2?6:-6);
+    if(out!=null){const xo=p(t,out,out+.3);o*=1-xo;y-=eIn(xo)*60;s*=1-xo*.15}
+    w.style.opacity=o;w.style.transform=`translateY(${y}px) scale(${s}) rotate(${r}deg)`;});}
 
-/* grain */
 const gc=$("grain").getContext("2d");
-function grain(frame){let s=frame*9301+49297;const rnd=()=>(s=(s*233280+49297)%2147483647)/2147483647;
+function grain(frame){let s=(frame*9301+49297)%2147483647;const rnd=()=>(s=(s*48271)%2147483647)/2147483647;
   const img=gc.createImageData(540,960);for(let i=0;i<img.data.length;i+=4){const v=rnd()*255;img.data[i]=img.data[i+1]=img.data[i+2]=v;img.data[i+3]=255}gc.putImageData(img,0,0);}
 
-/* ---------- master seek ---------- */
-const sceneUI=["cap1","cap2","cap3","ctaShade","ctaQ","opt1","opt2","ctaW"];
+const BOARD_C=[14+260,268+260];
+const ICON=(()=>{const cw=(SW-76)/4;return [38+cw*2.5,130+(104+36+31)*2+52]})();
+
 function seek(t){
   const frame=Math.round(t*30);
-  // ---- camera (whole room + stage) ----
-  const drift=[Math.sin(t*.55)*5+Math.sin(t*1.13+1)*3, Math.sin(t*.43+2)*4+Math.sin(t*.97)*2, Math.sin(t*.37)*.35];
-  // global camera zoom keys
-  const camS=kf(t,[[0,1.0],[3.9,1.07],[4.9,1.0],[7.8,1.03],[8.4,1.42],[13.2,1.5],[13.75,1.3],[15.0,1.32],[15.7,1.0],[20,1.03]]);
-  const camY=kf(t,[[0,0],[7.8,0],[8.4,-120],[13.2,-150],[13.75,260],[15,270],[15.7,0],[20,0]]);
-  const ac=kick(t,0.45,.5)*.025 + kick(t,13.3,.6)*.06 + kick(t,11.8,.5)*.02 + kick(t,6.1,.5)*.015;
-  const camT=`translate(${drift[0]}px,${drift[1]+camY}px) rotate(${drift[2]}deg) scale(${camS*(1+ac)})`;
-  $("room").style.transform=camT+` scale(${1+ (camS-1)*-0.6})`;
-  $("stage").style.transform=camT;$("stage").style.transformOrigin="50% 50%";
+  const hand=t>=4.6, h=H[hand?"hand":"desk"];
+  $("shotDesk").style.display=hand?"none":"block";$("shotHand").style.display=hand?"block":"none";
 
-  // ---- phone pose ----
-  const pose=kf(t,[
-     [0,   [1090, 58,-14, 0.80, 0]],
-     [3.95,[1080, 54,-12, 0.84, 0]],
-     [4.85,[ 950,  6, -2, 1.10,1]],
-     [8.0, [ 950,  4, -1, 1.10,1]],
-     [15.0,[ 950,  4, -1, 1.10,1]],
-     [15.7,[1400, 8, -2, 0.80,1]],
-     [20,  [1390, 7, -1.5, 0.82,1]]
-  ]);
-  const [py,rx,rz,ps,held]=pose;
-  const breathe=held*(Math.sin(t*1.7)*4);
-  $("phoneWrap").style.transform=`translate3d(0,${py+breathe}px,0) rotateX(${rx+Math.sin(t*1.3)*held*.6}deg) rotateZ(${rz+Math.sin(t*.9)*held*.5}deg) scale(${ps})`;
-  $("phoneShadow").style.opacity=1-held*0.6;
-  $("phoneShadow").style.transform=`translateZ(-40px) translate(${held*20}px,${held*30}px)`;
+  // камера: [scale, focusX, focusY, екранна Y куди ставимо фокус]
+  const bc=mapPt(H.hand,...BOARD_C), scrC=mapPt(H.desk,SW/2,SH/2), revC=mapPt(H.hand,SW/2,880);
+  let cam;
+  if(!hand) cam=kf(t,[[0,[1.05,540,1000,1000]],[4.1,[1.16,scrC[0],scrC[1],1060]],[4.6,[2.7,scrC[0],scrC[1],960]]]);
+  else cam=kf(t,[[4.6,[1.55,560,920,960]],[5.3,[1.06,555,960,960]],[9.3,[1.08,555,960,960]],[10.0,[1.48,bc[0],bc[1],1010]],
+      [19.9,[1.52,bc[0],bc[1],1010]],[20.3,[1.62,bc[0],bc[1]+10,1020]],[23.2,[1.6,bc[0],bc[1],1010]],[23.6,[1.7,bc[0],bc[1],1020]],
+      [31.6,[1.66,bc[0],bc[1],1010]],[32.4,[1.4,bc[0],bc[1],1180]],[35.0,[1.42,bc[0],bc[1],1180]],
+      [35.6,[1.75,revC[0],revC[1]-60,1000]],[38.2,[1.8,revC[0],revC[1]-60,1000]],[38.9,[1.06,555,960,960]],[45,[1.1,555,960,960]]]);
+  let [s,fx,fy,cy]=cam;
+  s*=1+kick(t,0.55,.5)*.02+kick(t,MATE,.6)*.05+kick(t,MOVES[8].t+MD,.5)*.025+kick(t,MOVES[6].t+MD,.5)*.018+kick(t,6.65,.5)*.012;
+  const dx=Math.sin(t*.55)*5+Math.sin(t*1.13+1)*3+(hand?Math.sin(t*2.3)*2.5:0);
+  const dy=Math.sin(t*.43+2)*4+Math.sin(t*.97)*2+(hand?Math.sin(t*1.9+1)*3:0);
+  const rot=Math.sin(t*.37)*.3+(hand?Math.sin(t*1.1)*.25:0);
+  let tx=540+dx-fx*s, ty=cy+dy-fy*s;
+  tx=Math.min(0,Math.max(1080-1080*s,tx)); ty=Math.min(0,Math.max(1920-1920*s,ty));
+  const camT=`translate(${tx}px,${ty}px) scale(${s}) rotate(${rot}deg)`;
+  $("cam").style.transform=camT;
+  $("screen").style.transform=camT+" "+m3d(h);
+  const blur=(t>4.25&&t<5.1)?Math.max(p(t,4.3,4.6),1-p(t,4.6,5.05))*14:0;
+  const fl=blur>0.1?`blur(${blur}px)`:"none";
+  $("cam").style.filter=fl;$("screen").style.filter=fl;
+  $("shotHand").querySelector("img").style.filter=s>1.3?`blur(${Math.min(2.5,(s-1.3)*5)}px) brightness(.85)`:"none";
 
-  // hands (rise with the lift)
-  const hIn=eOut(p(t,3.95,4.75));
-  $("handBack").style.opacity=hIn;
-  $("handBack").style.transform=`translateY(${(1-hIn)*500}px)`;
-  // build fingers once
-  if(!$("palm").dataset.b){$("palm").dataset.b=1;let h="";
-    [[300,150],[300,250],[296,350],[290,445]].forEach(([x,y],i)=>{h+=`<div class="finger skin" style="left:${x}px;top:${y-850}px;height:${200-i*14}px;transform:rotate(${-70+i*4}deg);transform-origin:0 50%"></div>`});
-    $("handBack").insertAdjacentHTML("beforeend",h.replace(/left:(\d+)px;top:(-?\d+)px/g,(m,a,b)=>`left:${+a-40}px;top:${+b+600}px`));
-    $("handBack").insertAdjacentHTML("beforeend",'<div id="thumb"></div>');}
-
-  // ---- screen states ----
-  const on=t<0.42?0:kf(t,[[0.42,0],[0.6,1]],eOut);
+  const on=t<0.5?0:eOut(p(t,0.5,0.7));
   $("screenOff").style.opacity=1-on;
-  $("spill").style.opacity=on*(1-held*0.45)*(0.9+Math.sin(t*3)*0.03);
-  // lockscreen slide (unlock)
-  const un=eIO(p(t,4.95,5.4));
-  $("lock").style.transform=`translateY(${-un*1200}px)`;
-  $("lock").style.opacity=1-un*0.5;
-  $("lock").style.display=un>=1?"none":"block";
-  const nIn=eBack(p(t,0.45,0.85));
-  $("notif").style.transform=`translateY(${(1-nIn)*-160}px) scale(${.85+.15*nIn})`;
-  $("notif").style.opacity=clamp(nIn*1.5);
+  const dc=mapPt(H.desk,SW/2,SH/2);
+  $("glowDesk").style.background=`radial-gradient(420px 360px at ${dc[0]}px ${dc[1]}px, rgba(120,110,230,${.45*on}), rgba(90,90,200,${.15*on}) 50%, transparent 80%)`;
+  const hc=mapPt(H.hand,SW/2,SH/2);
+  $("glowHand").style.background=`radial-gradient(520px 700px at ${hc[0]}px ${hc[1]}px, rgba(${t<7?"140,120,240":"150,190,130"},.22), transparent 75%)`;
+
+  const un=eIO(p(t,5.55,5.95));
+  $("lock").style.transform=`translateY(${-un*1200}px)`;$("lock").style.display=un>=1?"none":"block";
+  const nIn=eBack(p(t,0.55,0.95));
+  $("notif").style.transform=`translateY(${(1-nIn)*-160}px) scale(${.85+.15*nIn})`;$("notif").style.opacity=clamp(nIn*1.5);
   $("home").style.transform=`scale(${1.08-0.08*un})`;
-  // tap on chess icon
-  const ic=$("chessIcon").querySelector(".t");
-  const press=kf(t,[[5.75,1],[5.85,.86],[6.05,1]]);
-  ic.style.transform=`scale(${press})`;
-  const icR={x:38+ (548-76)/4*2.5, y:130+ 3*0+ (104+36+31)*2 + 52};
-  const rp=p(t,5.8,6.2);
-  $("ripple").style.left=icR.x+"px";$("ripple").style.top=icR.y+"px";
-  $("ripple").style.opacity=(rp>0&&rp<1)?(1-rp)*.8:0;
-  $("ripple").style.transform=`scale(${.3+rp*1.6})`;
-  // thumb travels: swipe up at 4.95, then tap chess icon at 5.8
-  const thumbVis=kf(t,[[4.6,0],[4.8,1],[6.0,1],[6.25,0]],eOut)*(t<15?1:0);
-  const thX=kf(t,[[4.6,120],[4.95,20],[5.4,40],[5.75,icR.x-290-14],[6.2,icR.x-200]]);
-  const thY=kf(t,[[4.6,700],[4.95,520],[5.4,180],[5.75,icR.y-600-30],[6.2,icR.y-420]]);
-  const thZ=kf(t,[[5.7,1.08],[5.8,.96],[5.95,1.08]]);
-  $("thumbTip").style.opacity=thumbVis;
-  $("thumbTip").style.transform=`translate(${thX}px,${thY}px) rotate(-28deg) scale(${thZ})`;
+  const T1=$("touch1"),T2=$("touch2");
+  const sw=p(t,5.45,5.95);
+  T1.style.opacity=(sw>0&&sw<1)?Math.sin(sw*Math.PI)*.9:0;T1.style.left=SW/2+"px";T1.style.top=lerp(1120,500,eIO(sw))+"px";T1.style.transform="scale(.8)";
+  const tp=p(t,6.4,6.8);
+  T2.style.opacity=(tp>0&&tp<1)?(1-tp)*.95:0;T2.style.left=ICON[0]+"px";T2.style.top=ICON[1]+"px";T2.style.transform=`scale(${.6+tp*.9})`;
+  $("chessIcon").querySelector(".t").style.transform=`scale(${kf(t,[[6.4,1],[6.5,.86],[6.7,1]])})`;
+  const ao=eOut(p(t,6.6,7.05));
+  $("app").style.display=t<6.6?"none":"block";
+  $("app").style.transformOrigin=`${ICON[0]}px ${ICON[1]}px`;
+  $("app").style.transform=`scale(${.16+.84*ao})`;$("app").style.opacity=clamp(ao*2);$("app").style.borderRadius=(1-ao)*60+"px";
 
-  // app open
-  const ao=eOut(p(t,5.95,6.4));
-  $("app").style.display=t<5.95?"none":"block";
-  $("app").style.transformOrigin=`${icR.x}px ${icR.y}px`;
-  $("app").style.transform=`scale(${.18+.82*ao})`;
-  $("app").style.opacity=clamp(ao*2);
-  $("app").style.borderRadius=(1-ao)*60+"px";
-
-  // ---- chess ----
-  const pos={};start.forEach(s=>pos[s.id]=[s.f,s.r]);
-  let lift={};
-  MOVES.forEach((m,i)=>{const x=eIO(p(t,m.t,m.t+MD));
-    const f=lerp(m.from[0],m.to[0],x), r=lerp(m.from[1],m.to[1],x);
-    pos[m.id]=[f,r]; if(x>0&&x<1)lift[m.id]=Math.sin(x*Math.PI);});
-  start.forEach(s=>{const [f,r]=pos[s.id];const [x,y]=sqXY(f,r);const l=lift[s.id]||0;
-    const el=$(s.id);el.style.transform=`translate(${x}px,${y-l*10}px) scale(${1+l*.14})`;el.style.zIndex=l?10:1;
-    el.style.filter=l?`drop-shadow(0 ${8*l}px 6px rgba(0,0,0,.45))`:"none";});
-  // last move highlight
+  // шахи
+  const pos={},alive={};start.forEach(s=>{pos[s.id]=[s.f,s.r];alive[s.id]=1});const lift={};
+  MOVES.forEach(m=>{if(t<m.t)return;const x=eIO(p(t,m.t,m.t+MD));pos[m.id]=[lerp(m.from[0],m.to[0],x),lerp(m.from[1],m.to[1],x)];
+    if(x>0&&x<1)lift[m.id]=Math.sin(x*Math.PI);
+    if(m.cap)alive[m.cap]=1-p(t,m.t+MD*.75,m.t+MD*1.1);});
+  start.forEach(s=>{const [x,y]=sqXY(...pos[s.id]);const l=lift[s.id]||0;const el=$(s.id);
+    el.style.transform=`translate(${x}px,${y-l*10}px) scale(${(1+l*.14)*(.6+.4*alive[s.id])})`;el.style.opacity=alive[s.id];el.style.display=alive[s.id]<=0?"none":"flex";
+    el.style.zIndex=l?10:1;el.style.filter=l?`drop-shadow(0 ${8*l}px 6px rgba(0,0,0,.45))`:"none";});
   let last=-1;MOVES.forEach((m,i)=>{if(t>=m.t)last=i});
-  if(last>=0){const m=MOVES[last];const a=sqXY(...m.from),b=sqXY(...m.to);
-    $("hlA").style.display=$("hlB").style.display="block";
+  if(last>=0){const m=MOVES[last];const a=sqXY(...m.from),b=sqXY(...m.to);$("hlA").style.display=$("hlB").style.display="block";
     $("hlA").style.transform=`translate(${a[0]}px,${a[1]}px)`;$("hlB").style.transform=`translate(${b[0]}px,${b[1]}px)`;}
   else $("hlA").style.display=$("hlB").style.display="none";
-  // classification badges
   MOVES.forEach((m,i)=>{const el=$("cls"+i);if(!el)return;const x=eBack(p(t,m.t+MD,m.t+MD+.3));const [bx,by]=sqXY(...m.to);
-    el.style.opacity=clamp(x*2);el.style.transform=`translate(${bx+40}px,${by-14}px) scale(${x})`;
-    el.style.display=t<m.t?"none":"flex";});
-  // mate king glow
-  const mate=p(t,13.25+MD,13.25+MD+.25);
-  const kxy=sqXY(4,1);$("kingRed").style.transform=`translate(${kxy[0]}px,${kxy[1]}px) scale(${1+kick(t,13.65,.5)*.25})`;
-  $("kingRed").style.opacity=mate;
-  // king wobble / topple slightly
-  const kk=$("wK4");if(mate>0){kk.style.transform+=` rotate(${eOut(mate)*-14+Math.sin(t*14)*kick(t,13.65,.5)*6}deg)`;}
-  // move list and review lines
-  MOVES.forEach((m,i)=>{const show=t>=m.t+.1;const mv=$("mv"+i);mv.style.opacity=show?1:0;mv.classList.toggle("cur",i===last);
-    const ln=$("ln"+i);const x=eBack(p(t,m.t+MD,m.t+MD+.35));
-    // stack: newest at top of review area; show only last 2
-    const age=last-i; const slot=age;
-    ln.style.top=(slot*96)+"px";
-    const vis=t>=m.t+MD && age<=1;
-    ln.style.opacity=vis?clamp(x*2)*(age===1?.55:1):0;
-    ln.style.transform=`translateY(${(1-x)*30}px) scale(${.92+.08*x})`;});
-  // clocks
-  const clk=s=>{s=Math.max(0,Math.floor(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
-  let wT=179-Math.max(0,Math.min(t,8.55)-6.4)*1-Math.max(0,Math.min(t,11.75)-10.5)*1;
-  const bT=167-Math.max(0,Math.min(t,10.15)-8.9)-Math.max(0,Math.min(t,13.25)-12.1);
-  $("clkW").textContent=clk(wT);$("clkB").textContent=clk(bT);
-  const wTurn=(t<8.55)||(t>=10.15&&t<11.75);
-  $("clkW").classList.toggle("on",wTurn&&t<13.6);$("clkB").classList.toggle("on",!wTurn&&t<13.6);
-  // tap circles for white's moves
-  let tp=0,tx=0,ty=0;
-  MOVES.forEach(m=>{if(m.id[0]!=="w")return;[[m.t-.35,m.from],[m.t,m.to]].forEach(([tt,sq])=>{const x=p(t,tt,tt+.3);if(x>0&&x<1){tp=1-x;const [a,b]=sqXY(...sq);tx=a+14+32.5;ty=b+268+32.5;}})});
-  $("tap").style.opacity=tp*.9;$("tap").style.left=tx+"px";$("tap").style.top=ty+"px";$("tap").style.transform=`scale(${1.3-tp*.5})`;
-  // mate card
-  const mc=eBack(p(t,13.85,14.25));
-  $("mateCard").style.opacity=clamp(mc*2);
-  $("mateCard").style.transform=`translateY(${(1-mc)*80}px) scale(${.9+.1*mc})`;
-  // flash on mate
-  $("flash").style.opacity=Math.max(0,1-p(t,13.62,14.4))*(t>=13.62?1:0)*.9;
+    el.style.display=(t<m.t||(m.cls!=="#"&&last>i+1))?"none":"flex";el.style.opacity=clamp(x*2);el.style.transform=`translate(${bx+38}px,${by-14}px) scale(${x})`;});
+  const chk=(t>=MOVES[11].t+MD&&t<MOVES[12].t)?.55:0;const mate=p(t,MATE,MATE+.25);
+  const kxy=sqXY(4,1);$("kingRed").style.transform=`translate(${kxy[0]}px,${kxy[1]}px) scale(${1+kick(t,MATE,.5)*.25})`;
+  $("kingRed").style.opacity=Math.max(chk,mate);
+  if(mate>0)$("wK4").style.transform+=` rotate(${eOut(mate)*-14}deg)`;
+  MOVES.forEach((m,i)=>{const sh=t>=m.t+.1;$("mv"+i).style.opacity=sh?1:0;$("mv"+i).classList.toggle("cur",i===last);if(i%2===0)$("nm"+i).style.opacity=sh?1:0;});
+  let off=0;if(last>=0){const el=$("mv"+last);off=Math.max(0,el.offsetLeft+el.offsetWidth-(SW-30));}
+  $("mvStrip").style.transform=`translateX(${-off}px)`;
+  MOVES.forEach((m,i)=>{const ln=$("ln"+i);const x=eBack(p(t,m.t+MD,m.t+MD+.35));const age=last-i;
+    ln.style.top=(age*96)+"px";const vis=t>=m.t+MD&&age<=1&&age>=0&&t<MATE+.15;
+    ln.style.opacity=vis?clamp(x*2)*(age===1?.5:1):0;ln.style.transform=`translateY(${(1-x)*30}px) scale(${.92+.08*x})`;});
+  const clk=v=>{v=Math.max(0,Math.floor(v));return Math.floor(v/60)+":"+String(v%60).padStart(2,"0")};
+  let wUsed=0,bUsed=0,prev=7.1;
+  MOVES.forEach((m,i)=>{const end=Math.min(t,m.t);const d=Math.max(0,end-prev)*1.3;if(i%2===0)wUsed+=d;else bUsed+=d*.4;prev=Math.max(prev,end);});
+  $("clkW").textContent=clk(180-wUsed);$("clkB").textContent=clk(180-bUsed);
+  const wTurn=(last%2===1)||last<0;
+  $("clkW").classList.toggle("on",wTurn&&t<MATE);$("clkB").classList.toggle("on",!wTurn&&t<MATE);
+  let tpp=0,tx2=0,ty2=0;
+  MOVES.forEach((m,i)=>{if(i%2)return;[[m.t-.4,m.from],[m.t,m.to]].forEach(([tt,s2])=>{const x=p(t,tt,tt+.32);if(x>0&&x<1){tpp=1-x;const [a,b]=sqXY(...s2);tx2=14+a+32.5;ty2=268+b+32.5;}})});
+  if(t>9){T2.style.opacity=tpp*.9;T2.style.left=tx2+"px";T2.style.top=ty2+"px";T2.style.transform=`scale(${1.1-tpp*.4})`;}
+  const mc=eBack(p(t,MATE+.25,MATE+.65)),mcOut=p(t,35.1,35.4);
+  $("mateCard").style.opacity=clamp(mc*2)*(1-mcOut);$("mateCard").style.transform=`translateY(${(1-mc)*80-mcOut*40}px) scale(${.9+.1*mc})`;
+  const rc=eBack(p(t,35.3,35.7));
+  $("revCard").style.opacity=clamp(rc*2);$("revCard").style.transform=`translateY(${(1-rc)*80}px) scale(${.9+.1*rc})`;
+  const aw=eOut(p(t,35.8,36.9))*12, ab=eOut(p(t,36.1,37.2))*99;
+  $("accW").style.width=aw+"%";$("accB").style.width=ab+"%";$("accWn").textContent=Math.round(aw)+"%";$("accBn").textContent=Math.round(ab)+"%";
+  $("flash").style.opacity=t>=MATE?Math.max(0,1-p(t,MATE,MATE+.8))*.9:0;
 
-  // ---- captions ----
-  $("cap1").style.display=t<4.4?"block":"none";
-  wordsIn(W1,t,0.55,.11,.42,3.95);
-  $("cap2").style.display=(t>6.2&&t<8.6)?"block":"none";
-  wordsIn(W2,t,6.35,.1,.42,8.15);
-  $("shTop").style.opacity=Math.max(kf(t,[[6.2,0],[6.5,1],[8.2,1],[8.6,0]],eIO)*(t<9?1:0), kf(t,[[13.45,0],[13.7,1],[14.9,1],[15.3,0]],eIO)*(t>13?1:0));
-  $("cap3").style.display=(t>13.5&&t<15.3)?"block":"none";
-  wordsIn(W3,t,13.7,.12,.4,14.9);
-  const cs=p(t,15.0,15.5);
-  $("ctaShade").style.opacity=cs;
-  $("ctaQ").style.display=t>15?"block":"none";
-  wordsIn(WQ,t,15.25,.1,.45);
-  [["opt1",16.2],["opt2",16.65]].forEach(([id,t0],i)=>{const x=eBack(p(t,t0,t0+.45));const el=$(id);
+  // написи
+  wordsIn("cap1",W1,t,0.7,4.15,.11);
+  wordsIn("cap2",W2,t,7.15,9.4);
+  wordsIn("capA",WA,t,MOVES[6].t+MD+.15,MOVES[6].t+MD+2.0);
+  wordsIn("capB",WB,t,MOVES[8].t+MD+.15,MOVES[8].t+MD+2.6);
+  wordsIn("cap3",W3,t,MATE+.2,34.9,.12);
+  const topSh=Math.max(...[[7.0,9.6],[MOVES[6].t+MD,MOVES[6].t+MD+2.3],[MOVES[8].t+MD,MOVES[8].t+MD+2.9],[MATE,35.2],[38.6,46]].map(([a,b])=>Math.min(p(t,a,a+.3),1-p(t,b,b+.3))));
+  $("shTop").style.opacity=topSh;
+  $("shBot").style.opacity=p(t,38.8,39.4);
+  wordsIn("ctaQ",WQ,t,39.0,null);
+  [["opt1",40.0],["opt2",40.5]].forEach(([id,t0],i)=>{const x=eBack(p(t,t0,t0+.45));const el=$(id);
     el.style.opacity=clamp(x*2);el.style.transform=`translateX(${(1-x)*(i?260:-260)}px) rotate(${(1-x)*(i?4:-4)+Math.sin(t*2+i)*.6}deg) scale(${1+kick(t,t0+.3,.4)*.04})`;});
-  $("ctaW").style.display=t>17.3?"block":"none";
-  wordsIn(WW,t,17.5,.1,.45);
-  // gentle pulse on the "♟️" CTA line
-  if(t>18.4)$("ctaW").style.transform=`scale(${1+Math.sin((t-18.4)*5)*.02})`;else $("ctaW").style.transform="none";
-
+  wordsIn("ctaW",WW,t,41.4,null);
+  $("ctaW").style.transform=t>42.5?`scale(${1+Math.sin((t-42.5)*5)*.02})`:"none";
   grain(frame);
 }
-window.__seek=seek;
+window.__seek=seek;window.__duration=DURATION;
 const q=new URLSearchParams(location.search);
 if(q.has("t"))seek(+q.get("t"));
-else if(!q.has("render")){const t0=performance.now();(function loop(){seek(((performance.now()-t0)/1000)%20);requestAnimationFrame(loop)})();}
+else if(!q.has("render")){const t0=performance.now();(function loop(){seek(((performance.now()-t0)/1000)%DURATION);requestAnimationFrame(loop)})();}
 </script>
 </body>
 </html>
